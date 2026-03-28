@@ -153,3 +153,20 @@ const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+import express from "express";
+import path from "path";
+
+const app = express();
+
+// static files serve
+app.use(express.static("."));
+
+// homepage fix
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve("index.html"));
+});
+
+// server start
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server running 🚀");
+});
