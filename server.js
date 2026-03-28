@@ -1,40 +1,43 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // --- MIDDLEWARE ---
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname, '.'))); // Static files serve karne ke liye
 
 // --- MONGODB CONNECTION ---
-const MONGO_URI = "mongodb://127.0.0.1:27017/DILICART-clone";
+// Render par deploy karne ke liye MongoDB Atlas ka URL use karein. 
+// Agar abhi nahi hai toh ye local wala hi rahega par connect nahi hoga.
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/DILICART-clone";
 
 mongoose.connect(MONGO_URI)
     .then(async () => {
-        console.log("✅ Connected to MongoDB: DILICART-clone");
-        
-        // --- CRITICAL FIX: Purane duplicate indexes ko delete karna ---
+        console.log("✅ Connected to MongoDB");
         try {
             await mongoose.connection.db.collection('orders').dropIndexes();
-            console.log("🗑️ Old Indexes Cleared (Duplicate error fixed!)");
+            console.log("🗑️ Old Indexes Cleared");
         } catch (e) {
-            console.log("ℹ️ No old indexes to clear or collection is new.");
+            console.log("ℹ️ No old indexes to clear.");
         }
     })
     .catch(err => console.log("❌ DB Connection Error:", err));
 
 // --- SCHEMAS ---
-
-// 1. User Schema
 const User = mongoose.model('User', new mongoose.Schema({
     name: String,
     email: { type: String, unique: true },
     createdAt: { type: Date, default: Date.now }
 }));
 
-// 2. Product Schema
 const Product = mongoose.model('Product', new mongoose.Schema({
     name: String,
     price: Number,
@@ -43,7 +46,6 @@ const Product = mongoose.model('Product', new mongoose.Schema({
     category: { type: String, default: "General" }
 }));
 
-// 3. Order Schema (Simplified to avoid errors)
 const Order = mongoose.model('Order', new mongoose.Schema({
     userName: String,
     userEmail: String,
@@ -52,11 +54,10 @@ const Order = mongoose.model('Order', new mongoose.Schema({
     paymentMethod: { type: String, default: 'Cash on Delivery' },
     status: { type: String, default: 'Pending' },
     createdAt: { type: Date, default: Date.now }
-}, { strict: false })); // strict: false extra fields allow karta hai
+}, { strict: false }));
 
 // --- API ROUTES ---
 
-// --- USER LOGIN ---
 app.post('/api/user/login', async (req, res) => {
     try {
         const { email, name } = req.body;
@@ -71,7 +72,6 @@ app.post('/api/user/login', async (req, res) => {
     }
 });
 
-// --- GET PRODUCTS ---
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
@@ -81,43 +81,21 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// --- PLACE ORDER (Fix applied here) ---
 app.post('/api/orders', async (req, res) => {
     try {
         const { userName, userEmail, items, totalAmount, paymentMethod } = req.body;
-        
         if (!userEmail || !items || items.length === 0) {
             return res.status(400).json({ success: false, message: "Invalid Order Data" });
         }
-
-        const newOrder = new Order({
-            userName, 
-            userEmail, 
-            items, 
-            totalAmount, 
-            paymentMethod
-        });
-
+        const newOrder = new Order({ userName, userEmail, items, totalAmount, paymentMethod });
         const savedOrder = await newOrder.save();
-        console.log("✅ Order Saved Success:", savedOrder._id);
-        
-        res.status(201).json({ 
-            success: true, 
-            orderId: savedOrder._id,
-            message: "Order placed!" 
-        });
+        res.status(201).json({ success: true, orderId: savedOrder._id });
     } catch (err) {
-        console.error("❌ Order Error:", err.message);
-        res.status(500).json({ 
-            success: false, 
-            message: "Database error: " + err.message 
-        });
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 
 // --- ADMIN ROUTES ---
-
-// Add Product
 app.post('/api/admin/add-product', async (req, res) => {
     try {
         const newProduct = new Product(req.body);
@@ -128,45 +106,14 @@ app.post('/api/admin/add-product', async (req, res) => {
     }
 });
 
-// View Orders
-app.get('/api/admin/orders', async (req, res) => {
-    try {
-        const orders = await Order.find().sort({ createdAt: -1 });
-        res.json(orders);
-    } catch (err) {
-        res.status(500).json({ message: "Error" });
-    }
-});
-
-// Delete Product
-app.delete('/api/admin/product/:id', async (req, res) => {
-    try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ success: false });
-    }
+// --- SERVE FRONTEND ---
+app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "index.html"));
 });
 
 // --- START SERVER ---
-const PORT = 5000;
+// Render automatically PORT environment variable provide karta hai
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
-import express from "express";
-import path from "path";
-
-const app = express();
-
-// static files serve
-app.use(express.static("."));
-
-// homepage fix
-app.get("/", (req, res) => {
-  res.sendFile(path.resolve("index.html"));
-});
-
-// server start
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server running 🚀");
+    console.log(`🚀 Server running on port ${PORT}`);
 });
