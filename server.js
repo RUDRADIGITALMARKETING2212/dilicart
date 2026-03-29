@@ -12,23 +12,13 @@ const app = express();
 // --- MIDDLEWARE ---
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '.'))); // Static files serve karne ke liye
+app.use(express.static(path.join(__dirname, '.')));
 
 // --- MONGODB CONNECTION ---
-// Render par deploy karne ke liye MongoDB Atlas ka URL use karein. 
-// Agar abhi nahi hai toh ye local wala hi rahega par connect nahi hoga.
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/DILICART-clone";
 
 mongoose.connect(MONGO_URI)
-    .then(async () => {
-        console.log("✅ Connected to MongoDB");
-        try {
-            await mongoose.connection.db.collection('orders').dropIndexes();
-            console.log("🗑️ Old Indexes Cleared");
-        } catch (e) {
-            console.log("ℹ️ No old indexes to clear.");
-        }
-    })
+    .then(() => console.log("✅ Connected to MongoDB"))
     .catch(err => console.log("❌ DB Connection Error:", err));
 
 // --- SCHEMAS ---
@@ -46,9 +36,12 @@ const Product = mongoose.model('Product', new mongoose.Schema({
     category: { type: String, default: "General" }
 }));
 
+// Yahan address aur mobile add kiya hai
 const Order = mongoose.model('Order', new mongoose.Schema({
     userName: String,
     userEmail: String,
+    address: String, 
+    mobile: String,
     items: Array,
     totalAmount: Number,
     paymentMethod: { type: String, default: 'Cash on Delivery' },
@@ -83,11 +76,23 @@ app.get('/api/products', async (req, res) => {
 
 app.post('/api/orders', async (req, res) => {
     try {
-        const { userName, userEmail, items, totalAmount, paymentMethod } = req.body;
+        // Frontend se address aur mobile bhi extract kar rahe hain
+        const { userName, userEmail, address, mobile, items, totalAmount, paymentMethod } = req.body;
+        
         if (!userEmail || !items || items.length === 0) {
             return res.status(400).json({ success: false, message: "Invalid Order Data" });
         }
-        const newOrder = new Order({ userName, userEmail, items, totalAmount, paymentMethod });
+        
+        const newOrder = new Order({ 
+            userName, 
+            userEmail, 
+            address, 
+            mobile, 
+            items, 
+            totalAmount, 
+            paymentMethod 
+        });
+
         const savedOrder = await newOrder.save();
         res.status(201).json({ success: true, orderId: savedOrder._id });
     } catch (err) {
@@ -96,6 +101,8 @@ app.post('/api/orders', async (req, res) => {
 });
 
 // --- ADMIN ROUTES ---
+
+// 1. Add Product
 app.post('/api/admin/add-product', async (req, res) => {
     try {
         const newProduct = new Product(req.body);
@@ -106,13 +113,22 @@ app.post('/api/admin/add-product', async (req, res) => {
     }
 });
 
+// 2. GET ALL ORDERS (Missing Route jo aap dhoond rahe the)
+app.get('/api/admin/orders', async (req, res) => {
+    try {
+        const orders = await Order.find().sort({ createdAt: -1 }); // Naye orders pehle dikhenge
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ message: "Orders fetch karne mein error", error: err.message });
+    }
+});
+
 // --- SERVE FRONTEND ---
 app.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "index.html"));
 });
 
 // --- START SERVER ---
-// Render automatically PORT environment variable provide karta hai
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
