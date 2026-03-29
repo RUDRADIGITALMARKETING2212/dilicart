@@ -12,9 +12,10 @@ const app = express();
 // --- MIDDLEWARE ---
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '.')));
+app.use(express.static(path.join(__dirname, '.'))); 
 
 // --- MONGODB CONNECTION ---
+// Render par environment variable (MONGO_URI) set karna na bhoolein
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/DILICART-clone";
 
 mongoose.connect(MONGO_URI)
@@ -22,12 +23,17 @@ mongoose.connect(MONGO_URI)
     .catch(err => console.log("❌ DB Connection Error:", err));
 
 // --- SCHEMAS ---
+
+// User Schema (Address aur Mobile ke saath)
 const User = mongoose.model('User', new mongoose.Schema({
     name: String,
     email: { type: String, unique: true },
+    address: String,
+    mobile: String,
     createdAt: { type: Date, default: Date.now }
 }));
 
+// Product Schema
 const Product = mongoose.model('Product', new mongoose.Schema({
     name: String,
     price: Number,
@@ -36,11 +42,11 @@ const Product = mongoose.model('Product', new mongoose.Schema({
     category: { type: String, default: "General" }
 }));
 
-// Yahan address aur mobile add kiya hai
+// Order Schema (Sari details save karne ke liye)
 const Order = mongoose.model('Order', new mongoose.Schema({
     userName: String,
     userEmail: String,
-    address: String, 
+    address: String,
     mobile: String,
     items: Array,
     totalAmount: Number,
@@ -51,12 +57,19 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 
 // --- API ROUTES ---
 
+// 1. User Login/Register
 app.post('/api/user/login', async (req, res) => {
     try {
-        const { email, name } = req.body;
+        const { email, name, address, mobile } = req.body;
         let user = await User.findOne({ email });
+
         if (!user) {
-            user = new User({ name: name || 'Guest', email });
+            user = new User({ name, email, address, mobile });
+            await user.save();
+        } else {
+            // Agar user hai toh uska address/mobile update kar dein
+            user.address = address || user.address;
+            user.mobile = mobile || user.mobile;
             await user.save();
         }
         res.json({ success: true, user });
@@ -65,6 +78,7 @@ app.post('/api/user/login', async (req, res) => {
     }
 });
 
+// 2. Fetch All Products
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
@@ -74,23 +88,22 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+// 3. Place New Order
 app.post('/api/orders', async (req, res) => {
     try {
-        // Frontend se address aur mobile bhi extract kar rahe hain
-        const { userName, userEmail, address, mobile, items, totalAmount, paymentMethod } = req.body;
+        const { userName, userEmail, address, mobile, items, totalAmount } = req.body;
         
         if (!userEmail || !items || items.length === 0) {
             return res.status(400).json({ success: false, message: "Invalid Order Data" });
         }
-        
+
         const newOrder = new Order({ 
             userName, 
             userEmail, 
             address, 
             mobile, 
             items, 
-            totalAmount, 
-            paymentMethod 
+            totalAmount 
         });
 
         const savedOrder = await newOrder.save();
@@ -102,7 +115,7 @@ app.post('/api/orders', async (req, res) => {
 
 // --- ADMIN ROUTES ---
 
-// 1. Add Product
+// 1. Add New Product
 app.post('/api/admin/add-product', async (req, res) => {
     try {
         const newProduct = new Product(req.body);
@@ -113,13 +126,23 @@ app.post('/api/admin/add-product', async (req, res) => {
     }
 });
 
-// 2. GET ALL ORDERS (Missing Route jo aap dhoond rahe the)
+// 2. View All Orders (Jo "Cannot GET" bol raha tha)
 app.get('/api/admin/orders', async (req, res) => {
     try {
-        const orders = await Order.find().sort({ createdAt: -1 }); // Naye orders pehle dikhenge
+        const orders = await Order.find().sort({ createdAt: -1 });
         res.json(orders);
     } catch (err) {
-        res.status(500).json({ message: "Orders fetch karne mein error", error: err.message });
+        res.status(500).json({ message: "Orders fetch failed", error: err.message });
+    }
+});
+
+// 3. Delete Order (Clean up ke liye)
+app.delete('/api/admin/order/:id', async (req, res) => {
+    try {
+        await Order.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: "Order deleted" });
+    } catch (err) {
+        res.status(500).json({ success: false });
     }
 });
 
@@ -131,5 +154,5 @@ app.get("/", (req, res) => {
 // --- START SERVER ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🚀 DiliCart Server running on port ${PORT}`);
 });
