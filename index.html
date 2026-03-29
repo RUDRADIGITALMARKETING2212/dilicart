@@ -326,7 +326,7 @@
             if (cart.length === 0) return alert("Your cart is empty!");
             const user = JSON.parse(localStorage.getItem('dg-user-details'));
             if (user) {
-                const msg = new SpeechSynthesisUtterance("Order placed successfully. Thank you " + user.name + " for shopping with Digicart.");
+                const msg = new SpeechSynthesisUtterance("Order placed successfully. Thank you " + user.name + " for shopping with Digicart.wish by ANAND SHUKLA");
                 window.speechSynthesis.speak(msg);
                 document.getElementById('success-address').innerText = `Your items will be shipped to: ${user.address}`;
                 document.getElementById('success-screen').classList.remove('hidden');
