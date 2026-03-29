@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiliCart </title>
+    <title>DiliCart | Premium Shopping</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #eaeded; font-family: Arial, sans-serif; }
@@ -13,6 +13,11 @@
         .hidden { display: none; }
         .product-card { background: white; border: 1px solid transparent; transition: 0.3s; cursor: pointer; }
         .product-card:hover { border: 1px solid #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(2deg); }
+        }
     </style>
 </head>
 <body>
@@ -44,24 +49,22 @@
             </div>
     </main>
 
-    <div id="auth-modal" class="fixed inset-0 bg-black/70 hidden z-[200] flex items-center justify-center">
-        <div class="bg-white p-8 rounded w-80 text-black shadow-2xl">
+    <div id="auth-modal" class="fixed inset-0 bg-black/70 hidden z-[200] flex items-center justify-center text-black">
+        <div class="bg-white p-8 rounded w-80 shadow-2xl">
             <h2 class="text-xl font-bold mb-4 border-b pb-2 text-center">Sign-In / Join</h2>
             <div class="space-y-4">
                 <input type="text" id="auth-name" placeholder="Your Name" class="w-full border p-2 rounded focus:outline-yellow-500">
                 <input type="email" id="auth-email" placeholder="Email Address" class="w-full border p-2 rounded focus:outline-yellow-500">
-                <input type="address" id="Address" placeholder="address" class="w-full border p-2 rounded focus:outline-yellow-500">
-                <input type="number" id="mobile number" placeholder="mobile number" class="w-full border p-2 rounded focus:outline-yellow-500">
                 <button onclick="handleAuth()" class="btn-amazon w-full py-2 font-bold shadow-md">Continue</button>
                 <p class="text-[10px] text-center text-gray-500">By continuing, you agree to DiliCart's Conditions of Use.</p>
             </div>
         </div>
     </div>
 
-    <div id="detail-modal" class="fixed inset-0 bg-black/80 hidden z-[150] flex items-center justify-center p-4">
+    <div id="detail-modal" class="fixed inset-0 bg-black/80 hidden z-[150] flex items-center justify-center p-4 text-black">
         <div class="bg-white max-w-4xl w-full rounded-lg flex flex-col md:flex-row overflow-hidden relative">
             <button onclick="closeDetails()" class="absolute top-4 right-4 text-3xl">&times;</button>
-            <div class="md:w-1/2 p-8 bg-white flex items-center justify-center">
+            <div class="md:w-1/2 p-8 bg-white flex items-center justify-center border-r">
                 <img id="detail-img" src="" class="max-h-80 object-contain">
             </div>
             <div class="md:w-1/2 p-8 flex flex-col justify-center">
@@ -77,7 +80,7 @@
         </div>
     </div>
 
-    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl translate-x-full transition-transform z-[100] flex flex-col text-black">
+    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl translate-x-full transition-transform z-[100] flex flex-col text-black border-l">
         <div class="p-4 border-b bg-gray-100 flex justify-between items-center">
             <h3 class="font-bold">Shopping Cart</h3>
             <button onclick="toggleCart()" class="text-2xl">&times;</button>
@@ -90,7 +93,7 @@
     </div>
 
     <div id="admin-modal" class="fixed inset-0 bg-black/90 hidden z-[400] overflow-y-auto p-4 text-black">
-        <div class="bg-white max-w-5xl mx-auto rounded-lg p-6">
+        <div class="bg-white max-w-5xl mx-auto rounded-lg p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold border-l-4 border-red-600 pl-2">Admin Panel</h2>
                 <button onclick="toggleAdminModal()" class="text-3xl">&times;</button>
@@ -112,33 +115,16 @@
         </div>
     </div>
 
-
-            <div class="flex-1 relative">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/30 blur-[80px] rounded-full"></div>
-                
-                <div class="relative animate-[float_6s_ease-in-out_infinite]">
-                    <img src="https://m.media-amazon.com/images/I/71o8Q5h63KL._SL1500_.jpg" 
-                         alt="Tech Device" 
-                         class="w-full max-w-[450px] mx-auto drop-shadow-[0_35px_35px_rgba(34,211,238,0.25)]">
-                </div>
-            </div>
-
+    <div id="success-screen" class="fixed inset-0 bg-black/90 hidden z-[500] flex items-center justify-center p-4 text-black">
+        <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl border-4 border-green-500">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold">✓</div>
+            <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
+            <p class="text-slate-500 text-sm mb-6">Aapka order successfully place ho gaya hai via Cash on Delivery.</p>
+            <div id="final-id" class="bg-slate-100 p-3 rounded-xl font-mono text-xs font-bold text-slate-600 mb-6">ORDER-ID: ...</div>
+            <button onclick="location.reload()" class="w-full bg-amazon-dark text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-gray-800 transition-all">Continue Shopping</button>
         </div>
     </div>
-</section>
 
-<style>
-    @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-25px) rotate(2deg); }
-    }
-    
-    /* Smooth transition for gradient text */
-    .bg-clip-text {
-        -webkit-background-clip: text;
-        background-clip: text;
-    }
-</style>
     <script>
         const API_URL = "https://felicity-dilicart.onrender.com/api";
         let cart = [];
@@ -166,8 +152,7 @@
             document.getElementById('detail-img').src = p.image;
             document.getElementById('detail-name').innerText = p.name;
             document.getElementById('detail-price').innerText = `₹${p.price.toLocaleString()}`;
-            document.getElementById('detail-desc').innerText = p.description || "Premium quality product with guaranteed satisfaction.";
-            
+            document.getElementById('detail-desc').innerText = p.description || "Premium quality product.";
             document.getElementById('detail-add-btn').onclick = () => { addToCart(id); closeDetails(); };
             document.getElementById('detail-buy-btn').onclick = () => { addToCart(id); closeDetails(); toggleCart(); };
             document.getElementById('detail-modal').classList.remove('hidden');
@@ -228,42 +213,34 @@
         }
 
         async function placeOrder() {
-    const user = JSON.parse(localStorage.getItem('DILICART-users'));
-    if(!user) {
-        alert("Pehle Sign-in karein!");
-        return toggleAuthModal();
-    }
-    if(cart.length === 0) return alert("Cart khali hai!");
+            const user = JSON.parse(localStorage.getItem('DILICART-users'));
+            if(!user) return toggleAuthModal();
+            if(cart.length === 0) return alert("Cart khali hai!");
 
-    const total = cart.reduce((s, i) => s + i.price, 0);
-    
-    try {
-        const res = await fetch(`${API_URL}/orders`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                userName: user.name,
-                userEmail: user.email,
-                items: cart,
-                totalAmount: total
-            })
-        });
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        userName: user.name,
+                        userEmail: user.email,
+                        items: cart,
+                        totalAmount: total
+                    })
+                });
 
-        const data = await res.json();
-        
-        if(res.ok || data.success) {
-            // Modal ko show karne ke liye 'hidden' class remove karein
-            document.getElementById('success-screen').classList.remove('hidden');
-            document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || 'SUCCESS'}`;
-            cart = []; 
-            updateCartUI();
-        } else {
-            alert("Order failed: " + (data.message || "Server error"));
+                const data = await res.json();
+                if(res.ok || data.success) {
+                    document.getElementById('success-screen').classList.remove('hidden');
+                    document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || 'SUCCESS'}`;
+                    cart = []; updateCartUI();
+                } else {
+                    alert("Order failed: " + data.message);
+                }
+            } catch (e) { alert("Server Error!"); }
         }
-    } catch (e) {
-        alert("Server connection issue. Please try again.");
-    }
-}
+
         async function adminAddProduct() {
             const product = {
                 name: document.getElementById('p-name').value,
@@ -276,7 +253,7 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(product)
             });
-            if(res.ok) { alert("Product Added Successfully!"); location.reload(); }
+            if(res.ok) { alert("Product Added!"); location.reload(); }
         }
 
         async function fetchAdminOrders() {
@@ -284,22 +261,12 @@
             const orders = await res.json();
             document.getElementById('admin-orders-list').innerHTML = orders.map(o => `
                 <div class="p-3 border rounded bg-white text-xs mb-2">
-                    <p><b>User:</b> ${o.userName} (${o.userEmail})</p>
+                    <p><b>User:</b> ${o.userName}</p>
                     <p><b>Total:</b> ₹${o.totalAmount.toLocaleString()}</p>
                     <p><b>Status:</b> <span class="text-orange-600 font-bold">${o.status}</span></p>
-                    <p class="text-[10px] text-gray-400 mt-1">Date: ${new Date(o.createdAt).toLocaleDateString()}</p>
                 </div>
             `).join('');
         }
-        <div id="success-screen" class="fixed inset-0 bg-black/90 hidden z-[500] flex items-center justify-center p-4 text-black">
-    <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl">
-        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold">✓</div>
-        <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
-        <p class="text-slate-500 text-sm mb-6">Your order has been placed successfully via Cash on Delivery.</p>
-        <div id="final-id" class="bg-slate-100 p-3 rounded-xl font-mono text-xs font-bold text-slate-600 mb-6"></div>
-        <button onclick="location.reload()" class="w-full bg-amazon-dark text-white py-4 rounded-2xl font-bold shadow-lg">Continue Shopping</button>
-    </div>
-</div>
     </script>
 </body>
 </html>
