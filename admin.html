@@ -25,13 +25,8 @@
             </div>
             <h2 class="text-2xl font-black mb-2 tracking-tighter uppercase italic">DiliCart <span class="text-cyan-400">Secure</span></h2>
             <p class="text-slate-500 text-xs mb-8 font-bold uppercase tracking-widest">Admin Authorization Required</p>
-            
-            <input type="password" id="passkey" placeholder="••••••••" 
-                   class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-center text-2xl tracking-[0.5em] text-cyan-400 focus:outline-none focus:border-cyan-500 mb-6 transition-all">
-            
-            <button onclick="login()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-[#080d17] py-4 rounded-2xl font-black transition-all shadow-lg shadow-cyan-500/20">
-                Unlock Terminal
-            </button>
+            <input type="password" id="passkey" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-center text-2xl tracking-[0.5em] text-cyan-400 focus:outline-none focus:border-cyan-500 mb-6 transition-all">
+            <button onclick="login()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-[#080d17] py-4 rounded-2xl font-black transition-all shadow-lg shadow-cyan-500/20">Unlock Terminal</button>
             <p id="auth-error" class="text-red-500 text-xs mt-4 hidden font-bold italic">Invalid Passkey! Access Denied.</p>
         </div>
     </div>
@@ -40,15 +35,13 @@
         <div class="mb-12">
             <h1 class="text-xl font-800 italic tracking-tighter">DILICART<span class="text-cyan-400">.</span>CORE</h1>
         </div>
-
         <div class="mb-10 p-5 bg-white/5 rounded-[2rem] border border-white/5 flex items-center gap-4">
             <div id="avatar" class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-slate-900 text-xl shadow-lg">?</div>
             <div>
-                <p id="user-role" class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em]">FOUNDER/DIRECTOR</p>
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em]">DIRECTOR</p>
                 <p id="user-name" class="font-bold text-white text-sm">Loading...</p>
             </div>
         </div>
-
         <nav class="space-y-4 flex-1">
             <button class="w-full text-left px-5 py-3 rounded-2xl bg-cyan-500/10 text-cyan-400 font-bold border border-cyan-500/20 flex items-center gap-3">📊 Analytics</button>
             <button onclick="window.location.href='index.html'" class="w-full text-left px-5 py-3 rounded-2xl text-slate-400 hover:bg-white/5 transition flex items-center gap-3">🏠 View Store</button>
@@ -62,10 +55,9 @@
                 <h2 class="text-5xl font-black mb-2 tracking-tighter">Control <span class="gradient-text">Center</span></h2>
                 <p class="text-slate-400 font-medium">Monitoring DiliCart operations in real-time.</p>
             </div>
-            
             <div class="flex gap-4">
                 <div class="glass-card px-8 py-4 rounded-[2rem] text-center neon-border-cyan">
-                    <p class="text-[9px] text-cyan-400 font-bold uppercase mb-1">Total Earnings</p>
+                    <p class="text-[9px] text-cyan-400 font-bold uppercase mb-1">Total Revenue</p>
                     <p id="total-revenue" class="text-2xl font-black text-white italic">₹0</p>
                 </div>
                 <div class="glass-card px-8 py-4 rounded-[2rem] text-center">
@@ -82,10 +74,10 @@
                         <span class="w-2 h-6 bg-cyan-500 rounded-full"></span> List New Asset
                     </h3>
                     <div class="space-y-4">
-                        <input type="text" id="p-name" placeholder="Product Name" class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm transition-all">
-                        <input type="number" id="p-price" placeholder="Price (₹)" class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm transition-all">
-                        <input type="text" id="p-img" placeholder="Image URL" class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm transition-all">
-                        <textarea id="p-desc" placeholder="Product details..." class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm h-32"></textarea>
+                        <input type="text" id="p-name" placeholder="Product Name" class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm transition-all text-white">
+                        <input type="number" id="p-price" placeholder="Price (₹)" class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm transition-all text-white">
+                        <input type="text" id="p-img" placeholder="Image URL" class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm transition-all text-white">
+                        <textarea id="p-desc" placeholder="Product details..." class="w-full bg-white/5 border border-white/10 px-5 py-4 rounded-2xl focus:border-cyan-500 outline-none text-sm h-32 text-white"></textarea>
                         <button onclick="addProduct()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-[#080d17] py-4 rounded-2xl font-black transition-all shadow-lg shadow-cyan-500/20">🚀 Push to Live</button>
                     </div>
                 </div>
@@ -99,7 +91,6 @@
                         </h3>
                         <span id="order-count-badge" class="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20">0 ORDERS</span>
                     </div>
-
                     <div id="order-feed" class="space-y-6">
                         </div>
                 </div>
@@ -108,26 +99,21 @@
     </main>
 
     <script>
-        // Is line ko dhyaan se badlein:
-const API = "https://felicity-dilicart.onrender.com/api"; 
+        const API = "https://felicity-dilicart.onrender.com/api"; 
+        const ADMIN_DB = {
+            "rudra2212": { name: "FELICITY RUDRAxGARG", initial: "R", color: "#22d3ee" },
+            "anupam2212": { name: "Anupam Pandey", initial: "U", color: "#8b5cf6" },
+            "anand2212": { name: "Anand Shukla", initial: "A", color: "#3b82f6" }
+        };
 
-const ADMIN_DB = {
-    "anupam2212": { name: "Anupam Pandey", initial: "U", color: "#8b5cf6" },
-    "anand2212": { name: "Anand Shukla", initial: "A", color: "#3b82f6" },
-    // Aap apna passkey bhi yahan add kar sakte hain
-    "rudra2212": { name: "Rudra", initial: "R", color: "#22d3ee" } 
-};
-
-        // --- AUTH LOGIC ---
         function login() {
             const pass = document.getElementById('passkey').value;
             if (ADMIN_DB[pass]) {
                 sessionStorage.setItem('admin_session', JSON.stringify(ADMIN_DB[pass]));
                 initDashboard(ADMIN_DB[pass]);
             } else {
-                const error = document.getElementById('auth-error');
-                error.classList.remove('hidden');
-                setTimeout(() => error.classList.add('hidden'), 2000);
+                document.getElementById('auth-error').classList.remove('hidden');
+                setTimeout(() => document.getElementById('auth-error').classList.add('hidden'), 2000);
             }
         }
 
@@ -135,69 +121,68 @@ const ADMIN_DB = {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('sidebar').classList.remove('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
-            
             document.getElementById('user-name').innerText = user.name;
             const av = document.getElementById('avatar');
             av.innerText = user.initial;
             av.style.backgroundColor = user.color;
-            
             syncData();
         }
 
-        // --- CORE DATA SYNC ---
         async function syncData() {
             try {
-                // Get Products
-                const pRes = await fetch(`${API}/products`);
+                const [pRes, oRes] = await Promise.all([
+                    fetch(`${API}/products`),
+                    fetch(`${API}/admin/orders`)
+                ]);
                 const products = await pRes.json();
-                document.getElementById('p-count').innerText = products.length;
-
-                // Get Orders
-                const oRes = await fetch(`${API}/admin/orders`);
                 const orders = await oRes.json();
-                
-                // Calculate Total Earnings (Sales Analytics)
+
+                document.getElementById('p-count').innerText = products.length;
                 const revenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
                 document.getElementById('total-revenue').innerText = `₹${revenue.toLocaleString()}`;
                 document.getElementById('order-count-badge').innerText = `${orders.length} ORDERS`;
 
                 renderOrders(orders);
-            } catch (err) { console.error("Sync Failed"); }
+            } catch (err) { console.error("Sync Failed", err); }
         }
 
         function renderOrders(orders) {
             const feed = document.getElementById('order-feed');
             if(orders.length === 0) {
-                feed.innerHTML = `<div class="text-center py-20 opacity-20"><span class="text-6xl">📡</span><p class="font-bold mt-4">Waiting for customer signals...</p></div>`;
+                feed.innerHTML = `<div class="text-center py-20 opacity-20"><span class="text-6xl">📡</span><p class="font-bold mt-4">Waiting for signals...</p></div>`;
                 return;
             }
 
             feed.innerHTML = orders.map(o => `
-                <div class="bg-white/5 border border-white/5 p-6 rounded-[2rem] hover:bg-white/[0.07] transition-all group border-l-4 border-l-cyan-500/50">
-                    <div class="flex justify-between items-start mb-6">
+                <div class="bg-white/5 border border-white/5 p-6 rounded-[2rem] hover:bg-white/[0.08] transition-all group">
+                    <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-[9px] font-black text-cyan-400 tracking-[0.2em] mb-1">TRANSACTION #${o._id.slice(-6).toUpperCase()}</p>
+                            <p class="text-[9px] font-black text-cyan-400 tracking-[0.2em] mb-1 uppercase">Transmission #${o._id.slice(-6)}</p>
                             <h4 class="text-xl font-extrabold text-white">${o.userName}</h4>
-                            <p class="text-xs text-slate-500 font-medium">${o.userEmail || 'customer@dilicart.in'}</p>
+                            <p class="text-xs text-slate-400 italic">📞 ${o.mobile || 'N/A'}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-2xl font-black text-white italic">₹${o.totalAmount.toLocaleString()}</p>
-                            <span class="text-[9px] bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20 font-black">PAID / COD</span>
+                            <span class="text-[9px] bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20 font-black">COD</span>
                         </div>
                     </div>
 
-                    <div class="flex gap-4 overflow-x-auto pb-4 border-b border-white/5 mb-6">
+                    <div class="mb-6 p-4 bg-slate-900/50 rounded-2xl border border-white/5 text-xs text-slate-300 leading-relaxed">
+                        <p class="text-cyan-500 font-bold mb-1 uppercase text-[10px]">Shipping Terminal:</p>
+                        ${o.address || 'No address provided'}
+                    </div>
+
+                    <div class="flex gap-4 overflow-x-auto pb-4 mb-6">
                         ${o.items.map(i => `
-                            <div class="relative flex-shrink-0">
-                                <img src="${i.image}" class="w-14 h-14 rounded-2xl bg-white/10 p-2 object-contain border border-white/10">
-                                <span class="absolute -top-2 -right-2 bg-cyan-500 text-[#080d17] text-[8px] font-black px-2 py-0.5 rounded-full border-2 border-[#080d17]">x1</span>
+                            <div class="relative flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <img src="${i.image}" class="w-14 h-14 rounded-2xl bg-white/10 p-2 object-contain border border-white/10" title="${i.name}">
                             </div>
                         `).join('')}
                     </div>
 
                     <div class="flex gap-4">
-                        <button onclick="completeOrder('${o._id}')" class="flex-1 bg-cyan-500/10 hover:bg-cyan-400 hover:text-[#080d17] text-cyan-400 py-3.5 rounded-xl text-xs font-black transition-all border border-cyan-500/20 uppercase tracking-widest">
-                            Ship & Complete
+                        <button onclick="deleteOrder('${o._id}', true)" class="flex-1 bg-cyan-500/10 hover:bg-cyan-500 hover:text-[#080d17] text-cyan-400 py-3.5 rounded-xl text-xs font-black transition-all border border-cyan-500/20 uppercase tracking-widest">
+                            Mark as Shipped
                         </button>
                         <button onclick="deleteOrder('${o._id}')" class="px-5 py-3.5 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all border border-red-500/20">
                             🗑️
@@ -207,14 +192,15 @@ const ADMIN_DB = {
             `).join('');
         }
 
-        // --- ACTIONS ---
-        async function completeOrder(id) {
-            if(!confirm("Order ship ho gaya?")) return;
-            const res = await fetch(`${API}/admin/orders/${id}`, { method: 'DELETE' });
-            if(res.ok) {
-                showNotification("Order marked as Completed! 📦");
-                syncData();
-            }
+        async function deleteOrder(id, isComplete = false) {
+            if(!confirm(isComplete ? "Mark this order as delivered?" : "Delete this order permanent?")) return;
+            try {
+                const res = await fetch(`${API}/admin/order/${id}`, { method: 'DELETE' });
+                if(res.ok) {
+                    showNotification(isComplete ? "Mission Accomplished! 📦" : "Order Terminated! 🗑️");
+                    syncData();
+                }
+            } catch (e) { alert("Action Failed"); }
         }
 
         async function addProduct() {
@@ -224,7 +210,7 @@ const ADMIN_DB = {
                 image: document.getElementById('p-img').value,
                 description: document.getElementById('p-desc').value
             };
-            if(!p.name || !p.price) return alert("Fill mandatory fields!");
+            if(!p.name || !p.price) return alert("Missing Data Fields!");
             
             const res = await fetch(`${API}/admin/add-product`, {
                 method: 'POST',
@@ -232,14 +218,14 @@ const ADMIN_DB = {
                 body: JSON.stringify(p)
             });
             if(res.ok) {
-                showNotification("New Tech Live! 🚀");
+                showNotification("New Asset Deployed! 🚀");
                 location.reload();
             }
         }
 
         function showNotification(msg) {
             const n = document.createElement('div');
-            n.className = "fixed bottom-10 right-10 bg-cyan-500 text-[#080d17] px-8 py-4 rounded-2xl font-black shadow-2xl z-[6000] animate-bounce";
+            n.className = "fixed bottom-10 right-10 bg-cyan-500 text-[#080d17] px-8 py-4 rounded-2xl font-black shadow-2xl z-[6000]";
             n.innerText = msg;
             document.body.appendChild(n);
             setTimeout(() => n.remove(), 3000);
