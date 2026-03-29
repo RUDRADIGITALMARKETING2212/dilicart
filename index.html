@@ -190,57 +190,63 @@
         }
 
         async function handleAuth() {
-            const email = document.getElementById('auth-email').value;
-            const name = document.getElementById('auth-name').value;
-            if(!email || !name) return alert("Fill all fields");
+    const name = document.getElementById('auth-name').value;
+    const email = document.getElementById('auth-email').value;
+    const address = document.getElementById('Address').value; // Naya
+    const mobile = document.getElementById('mobile number').value; // Naya
 
-            const res = await fetch(`${API_URL}/user/login`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email, name })
-            });
-            const data = await res.json();
-            if(data.success) {
-                localStorage.setItem('DILICART-users', JSON.stringify(data.user));
-                updateUserUI();
-                toggleAuthModal();
-            }
-        }
+    if(!name || !email || !address || !mobile) return alert("Saare fields bhariye!");
 
+    const res = await fetch(`${API_URL}/user/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, name }) // Backend check
+    });
+    
+    const data = await res.json();
+    if(data.success) {
+        // Pura data save karein local storage mein
+        const userData = { ...data.user, address, mobile }; 
+        localStorage.setItem('DILICART-users', JSON.stringify(userData));
+        updateUserUI();
+        toggleAuthModal();
+    }
+}
         function updateUserUI() {
             const user = JSON.parse(localStorage.getItem('DILICART-users'));
             if(user) document.getElementById('user-display').innerHTML = `Hello, ${user.name.split(' ')[0]}<br><b class="text-white">Account & Lists</b>`;
         }
 
-        async function placeOrder() {
-            const user = JSON.parse(localStorage.getItem('DILICART-users'));
-            if(!user) return toggleAuthModal();
-            if(cart.length === 0) return alert("Cart khali hai!");
+       async function placeOrder() {
+    const user = JSON.parse(localStorage.getItem('DILICART-users'));
+    if(!user) return toggleAuthModal();
+    if(cart.length === 0) return alert("Cart khali hai!");
 
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            try {
-                const res = await fetch(`${API_URL}/orders`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        userName: user.name,
-                        userEmail: user.email,
-                        items: cart,
-                        totalAmount: total
-                    })
-                });
+    const total = cart.reduce((s, i) => s + i.price, 0);
+    
+    try {
+        const res = await fetch(`${API_URL}/orders`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                userName: user.name,
+                userEmail: user.email,
+                address: user.address, // Bhej rahe hain
+                mobile: user.mobile,   // Bhej rahe hain
+                items: cart,
+                totalAmount: total
+            })
+        });
 
-                const data = await res.json();
-                if(res.ok || data.success) {
-                    document.getElementById('success-screen').classList.remove('hidden');
-                    document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || 'SUCCESS'}`;
-                    cart = []; updateCartUI();
-                } else {
-                    alert("Order failed: " + data.message);
-                }
-            } catch (e) { alert("Server Error!"); }
+        const data = await res.json();
+        if(res.ok || data.success) {
+            document.getElementById('success-screen').classList.remove('hidden');
+            document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || 'SUCCESS'}`;
+            cart = []; 
+            updateCartUI();
         }
-
+    } catch (e) { alert("Order bhejte waqt error aaya!"); }
+}
         async function adminAddProduct() {
             const product = {
                 name: document.getElementById('p-name').value,
@@ -256,17 +262,19 @@
             if(res.ok) { alert("Product Added!"); location.reload(); }
         }
 
-        async function fetchAdminOrders() {
-            const res = await fetch(`${API_URL}/admin/orders`);
-            const orders = await res.json();
-            document.getElementById('admin-orders-list').innerHTML = orders.map(o => `
-                <div class="p-3 border rounded bg-white text-xs mb-2">
-                    <p><b>User:</b> ${o.userName}</p>
-                    <p><b>Total:</b> ₹${o.totalAmount.toLocaleString()}</p>
-                    <p><b>Status:</b> <span class="text-orange-600 font-bold">${o.status}</span></p>
-                </div>
-            `).join('');
-        }
+async function fetchAdminOrders() {
+    const res = await fetch(`${API_URL}/admin/orders`);
+    const orders = await res.json();
+    document.getElementById('admin-orders-list').innerHTML = orders.map(o => `
+        <div class="p-3 border rounded bg-white text-xs mb-2 shadow-sm border-l-4 border-yellow-500">
+            <p><b>Customer:</b> ${o.userName}</p>
+            <p><b>Mobile:</b> ${o.mobile || 'N/A'}</p>
+            <p><b>Address:</b> ${o.address || 'N/A'}</p>
+            <p><b>Total:</b> ₹${o.totalAmount.toLocaleString()}</p>
+            <p class="mt-1"><span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-bold">${o.status}</span></p>
+        </div>
+    `).join('');
+}
     </script>
 </body>
 </html>
