@@ -1,215 +1,350 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiliCart | Night Edition</title>
+    <title>DIGICART | Premium Shopping</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        amazon_blue: '#131921',
+                        amazon_light: '#232f3e',
+                        amazon_yellow: '#febd69',
+                        amazon_orange: '#f3a847',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { background-color: #020617; color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .bg-night-dark { background-color: #0f172a; border-bottom: 1px solid rgba(34, 211, 238, 0.2); }
-        .btn-neon { background: linear-gradient(135deg, #22d3ee, #3b82f6); color: #020617; border-radius: 12px; font-weight: 800; transition: 0.3s; box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3); }
-        .btn-neon:hover { box-shadow: 0 4px 25px rgba(34, 211, 238, 0.6); transform: translateY(-2px); }
-        .product-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); transition: 0.4s; cursor: pointer; border-radius: 20px; }
-        .product-card:hover { border: 1px solid rgba(34, 211, 238, 0.4); box-shadow: 0 10px 40px rgba(34, 211, 238, 0.15); }
-        .hidden { display: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #eaeded; color: #0f1111; transition: background 0.3s; scroll-behavior: smooth; }
+        .dark body { background-color: #0f172a; color: #f8fafc; }
+        .search-container:focus-within { ring: 2px solid #f3a847; box-shadow: 0 0 8px rgba(243, 168, 71, 0.5); }
+        .amz-card { background: white; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
+        .dark .amz-card { background: #1e293b; border-color: #334155; }
+        .amz-card:hover { transform: translateY(-4px); border-color: #f3a847; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        /* Skeleton Animation */
+        .skeleton { background: #e2e8f0; position: relative; overflow: hidden; border-radius: 4px; }
+        .dark .skeleton { background: #334155; }
+        .skeleton::after {
+            content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+        
+        /* Cart Shake */
+        @keyframes shake {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #f3a847; }
+        }
+        .cart-animate { animation: shake 0.4s ease-out; }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-    <header class="bg-night-dark text-white p-4 flex items-center justify-between sticky top-0 z-50">
-        <div class="flex items-center">
-            <h1 class="text-3xl font-extrabold ml-4 italic tracking-tighter cursor-pointer" onclick="location.reload()">DILICART<span class="text-cyan-400">.</span></h1>
-        </div>
-
-        <div class="flex items-center gap-6 mr-4">
-            <div onclick="toggleAuthModal()" class="cursor-pointer text-sm bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:border-cyan-500/50">
-                <p id="user-display" class="text-slate-400">Sign in</p>
-                <p class="font-bold text-xs uppercase tracking-widest text-white">Account</p>
+    <header class="bg-amazon_blue text-white sticky top-0 z-[2000] shadow-md">
+        <div class="max-w-[1500px] mx-auto flex items-center gap-2 md:gap-4 px-4 py-2">
+            <div class="p-2 border border-transparent hover:border-white cursor-pointer flex items-center gap-1 shrink-0" onclick="showHome()">
+                <span class="text-xl md:text-2xl font-bold tracking-tighter">digicart</span>
+                <span class="text-amazon_yellow text-xs mt-2 italic font-bold">.in</span>
             </div>
-            
-            <div onclick="toggleCart()" class="relative cursor-pointer flex items-center gap-2 bg-white/5 px-4 py-3 rounded-full border border-white/10">
-                <span id="cart-badge" class="absolute -top-1 -right-1 bg-cyan-500 text-[#020617] font-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full">0</span>
-                <span class="text-2xl">🛒</span>
+
+            <div class="hidden lg:flex items-center gap-1 p-2 border border-transparent hover:border-white cursor-pointer shrink-0" onclick="openDeliveryModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                </svg>
+                <div class="text-xs">
+                    <p class="text-gray-400">Deliver to <span id="user-nav-name">Guest</span></p>
+                    <p class="font-bold truncate max-w-[100px]" id="user-loc-display">Select address</p>
+                </div>
+            </div>
+
+            <div class="flex-1 flex h-10 overflow-hidden rounded-md search-container">
+                <input type="text" id="main-search" placeholder="Search Digicart.in" class="flex-1 px-4 text-black outline-none text-sm md:text-base">
+                <button class="bg-amazon_yellow hover:bg-amazon_orange px-3 md:px-5 flex items-center justify-center text-amazon_blue transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="hidden sm:block p-2 border border-transparent hover:border-white cursor-pointer shrink-0" onclick="openDeliveryModal()">
+                <p class="text-xs">Hello, <span id="user-nav-full" class="font-bold">Sign in</span></p>
+                <p class="text-sm font-bold">Account</p>
+            </div>
+
+            <button onclick="toggleTheme()" class="p-2 border border-transparent hover:border-white text-xl">
+                <span id="theme-icon">🌙</span>
+            </button>
+
+            <div id="cart-nav-btn" class="flex items-end p-2 border border-transparent hover:border-white cursor-pointer relative shrink-0" onclick="toggleCart()">
+                <div class="relative">
+                    <span id="cart-badge" class="absolute -top-2 left-1/2 -translate-x-1/2 text-amazon_orange font-bold text-lg leading-none">0</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto p-6">
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            </div>
-    </main>
+    <main class="max-w-[1500px] mx-auto pb-10">
+        <section class="relative h-[180px] md:h-[400px] mb-[-80px] md:mb-[-150px]">
+            <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img24/Laptop/June/Flyout/D139178972_IN_PC_Laptops_BAU_SBD_June_1500x300._CB554838618_.jpg" 
+                 class="w-full h-full object-cover [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]">
+        </section>
 
-    <div id="auth-modal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-6 backdrop-blur-sm">
-        <div class="bg-[#0f172a] p-10 rounded-[2.5rem] w-full max-w-md border border-white/10">
-            <h2 class="text-2xl font-black mb-6 text-center italic tracking-tighter uppercase">Sign-In / <span class="text-cyan-400">Join</span></h2>
-            <div class="space-y-4">
-                <input type="text" id="auth-name" placeholder="Full Name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition">
-                <input type="email" id="auth-email" placeholder="Email Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition">
-                <input type="text" id="auth-mobile" placeholder="Mobile Number" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition">
-                <textarea id="auth-address" placeholder="Delivery Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition h-24"></textarea>
-                <button onclick="handleAuth()" class="btn-neon w-full py-4 text-xl mt-4">Continue</button>
+        <div id="view-home" class="relative z-10 px-4">
+            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="skeleton h-64 w-full"></div>
+                <div class="skeleton h-64 w-full"></div>
+                <div class="skeleton h-64 w-full"></div>
+                <div class="skeleton h-64 w-full"></div>
             </div>
         </div>
-    </div>
 
-    <div id="detail-modal" class="fixed inset-0 bg-black/90 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-[#0f172a] max-w-4xl w-full rounded-[2.5rem] flex flex-col md:flex-row overflow-hidden border border-white/10 relative">
-            <button onclick="closeDetails()" class="absolute top-6 right-6 text-white text-4xl">&times;</button>
-            <div class="md:w-1/2 p-10 bg-white/5 flex items-center justify-center border-r border-white/10">
-                <img id="detail-img" src="" class="max-h-80 object-contain drop-shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-            </div>
-            <div class="md:w-1/2 p-10 flex flex-col justify-center">
-                <h2 id="detail-name" class="text-3xl font-bold mb-4 tracking-tighter"></h2>
-                <p id="detail-price" class="text-4xl font-black mb-6 text-white italic"></p>
-                <p id="detail-desc" class="text-slate-400 mb-10 text-sm leading-relaxed"></p>
-                <div class="flex gap-4">
-                    <button id="detail-add-btn" class="flex-1 bg-white/5 border border-white/10 py-4 rounded-xl font-bold hover:bg-white/10">Add to Cart</button>
-                    <button id="detail-buy-btn" class="btn-neon flex-1 py-4 text-lg">Buy Now</button>
+        <div id="view-detail" class="hidden bg-white dark:bg-slate-900 p-4 md:p-10 rounded shadow-lg mt-24 md:mt-40 mx-4 border dark:border-slate-700">
+            <button onclick="showHome()" class="text-sm text-blue-600 hover:text-amazon_orange transition-colors mb-6 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Back to results
+            </button>
+            <div class="flex flex-col lg:flex-row gap-10">
+                <div class="lg:w-1/3 flex items-center justify-center p-4 bg-white rounded-xl">
+                    <img id="det-img" src="" class="max-h-[300px] md:max-h-[450px] object-contain hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="lg:w-1/2">
+                    <h2 id="det-name" class="text-xl md:text-2xl font-semibold mb-2 leading-tight"></h2>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-amazon_orange">★★★★☆</span>
+                        <span class="text-blue-500 text-sm">4,281 ratings</span>
+                    </div>
+                    <div class="py-4 border-y border-gray-100 dark:border-slate-700">
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-red-600 text-2xl font-light">-25%</span>
+                            <span id="det-price" class="text-3xl font-medium"></span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">M.R.P: <span class="line-through">₹40,000</span></p>
+                    </div>
+                    <div class="mt-6 space-y-4">
+                        <h4 class="font-bold">About this item:</h4>
+                        <ul class="list-disc ml-5 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                            <li>Premium build quality with ergonomic design.</li>
+                            <li>Ultra-fast performance for seamless multitasking.</li>
+                            <li>12 Months manufacturer warranty included.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="lg:w-1/4 border rounded-xl p-6 h-fit space-y-4 shadow-sm bg-gray-50 dark:bg-slate-800 dark:border-slate-700">
+                    <p id="det-price-side" class="text-2xl font-bold"></p>
+                    <p class="text-green-700 font-bold">In Stock</p>
+                    <p class="text-sm italic">Ships from and sold by Digicart India.</p>
+                    <button id="add-to-cart-btn" class="w-full py-3 bg-amazon_yellow hover:bg-amazon_orange rounded-full text-sm font-bold shadow transition-all active:scale-95">Add to Cart</button>
+                    <button onclick="handleCheckout()" class="w-full py-3 bg-amazon_orange hover:bg-orange-500 rounded-full text-sm font-bold shadow transition-all active:scale-95">Buy Now</button>
                 </div>
             </div>
         </div>
+    </main>
+
+    <div id="cart-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[2500]" onclick="toggleCart()"></div>
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full max-w-[380px] bg-white dark:bg-slate-900 z-[3000] translate-x-full transition-transform duration-500 p-6 flex flex-col shadow-2xl">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h2 class="text-xl font-bold">Shopping Basket</h2>
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full">✕</button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto space-y-4 pr-2"></div>
+        <div class="pt-6 border-t mt-4">
+            <div class="flex justify-between mb-6">
+                <span class="text-lg">Subtotal:</span>
+                <span id="cart-total" class="font-bold text-red-700 text-xl">₹0</span>
+            </div>
+            <button onclick="handleCheckout()" class="w-full py-4 bg-amazon_yellow hover:bg-amazon_orange rounded-xl font-bold shadow-lg transition-colors">Proceed to Checkout</button>
+        </div>
     </div>
 
-    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-80 bg-[#0f172a] shadow-2xl translate-x-full transition-transform z-[100] flex flex-col border-l border-white/10">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center">
-            <h3 class="font-bold">Shopping Cart</h3>
-            <button onclick="toggleCart()" class="text-3xl">&times;</button>
-        </div>
-        <div id="cart-items" class="p-6 flex-1 overflow-y-auto space-y-4"></div>
-        <div class="p-6 border-t border-white/10 bg-white/5">
-            <p class="text-xl font-bold">Total: <span id="cart-total" class="text-cyan-400 italic">₹0</span></p>
-            <button onclick="placeOrder()" class="btn-neon w-full py-4 mt-6 text-lg">Checkout (COD)</button>
+    <div id="delivery-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[4000] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl scale-95 transition-transform">
+            <div class="bg-amazon_light text-white p-4 font-bold">Delivery Settings</div>
+            <div class="p-6 space-y-4">
+                <input type="text" id="ship-name" placeholder="Full Name" class="w-full p-3 border rounded-xl dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 ring-amazon_yellow">
+                <input type="tel" id="ship-phone" placeholder="Mobile Number" class="w-full p-3 border rounded-xl dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 ring-amazon_yellow">
+                <textarea id="ship-address" placeholder="Full Address with Pincode" class="w-full p-3 border rounded-xl h-24 dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 ring-amazon_yellow"></textarea>
+                <button onclick="saveDetails()" class="w-full py-3 bg-amazon_yellow font-bold rounded-xl shadow-md hover:bg-amazon_orange transition-all">Update Details</button>
+                <button onclick="logout()" id="logout-btn" class="hidden w-full text-xs text-red-500 hover:underline">Sign Out</button>
+            </div>
+            <button onclick="closeModal()" class="w-full p-3 text-sm text-gray-400 hover:text-gray-600 transition-colors">Maybe Later</button>
         </div>
     </div>
 
-    <div id="success-screen" class="fixed inset-0 bg-black/95 hidden z-[500] flex items-center justify-center p-6">
-        <div class="bg-[#0f172a] p-10 rounded-[3rem] max-w-sm w-full text-center border-4 border-cyan-500 shadow-[0_0_50px_rgba(34,211,238,0.3)]">
-            <div class="w-20 h-20 bg-cyan-500 text-[#020617] rounded-full flex items-center justify-center mx-auto mb-6 text-4xl font-bold italic">OK</div>
-            <h2 class="text-2xl font-black mb-2 uppercase italic tracking-tighter">Order Success!</h2>
-            <p class="text-slate-500 text-sm mb-8">Details have been sent to our Executive Dashboard.</p>
-            <div id="final-id" class="bg-black/50 p-4 rounded-xl font-mono text-xs text-cyan-400 border border-white/10 mb-6"></div>
-            <button onclick="location.reload()" class="w-full bg-white text-[#020617] py-4 rounded-2xl font-black uppercase">Continue</button>
-        </div>
+    <div id="success-screen" class="fixed inset-0 bg-white dark:bg-slate-900 hidden z-[5000] flex flex-col items-center justify-center text-center p-6">
+        <div class="w-24 h-24 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center text-5xl mb-6 animate-bounce">✓</div>
+        <h2 class="text-3xl font-bold mb-2">Order Confirmed!</h2>
+        <p id="success-address" class="text-gray-500 dark:text-gray-400 mb-8 max-w-xs"></p>
+        <button onclick="location.reload()" class="bg-amazon_yellow px-12 py-3 rounded-full font-bold hover:bg-amazon_orange shadow-lg transition-transform active:scale-95">Continue Shopping</button>
     </div>
 
     <script>
         const API_URL = "https://felicity-dilicart.onrender.com/api";
-        let cart = [];
-        let allProducts = [];
+        let allProducts = [], cart = [];
 
-        window.onload = () => { fetchProducts(); updateUserUI(); };
+        // Sample Data with more details
+        const localData = [
+            {_id:'1', name:'Sony WH-1000XM5 Wireless Noise Canceling Headphones', price:29990, image:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600'},
+            {_id:'2', name:'Apple Watch Series 9 [GPS 45mm] Smartwatch', price:44900, image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600'},
+            {_id:'3', name:'Logitech MX Master 3S Wireless Mouse', price:8995, image:'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600'},
+            {_id:'4', name:'Smart LED Desk Lamp with USB Charging', price:2499, image:'https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&w=600'},
+            {_id:'5', name:'Samsung Galaxy S24 Ultra 5G', price:129999, image:'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600'}
+        ];
 
-        async function fetchProducts() {
+        window.onload = async () => {
+            updateUserUI();
+            
+            // Search Listener
+            document.getElementById('main-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+                renderProducts(filtered);
+            });
+
             try {
-                const res = await fetch(`${API_URL}/products`);
-                allProducts = await res.json();
-                document.getElementById('products-grid').innerHTML = allProducts.map(p => `
-                    <div class="product-card p-6 flex flex-col" onclick="openDetails('${p._id}')">
-                        <img src="${p.image}" class="h-44 object-contain mb-6 drop-shadow-[0_5px_15px_rgba(255,255,255,0.05)]">
-                        <h3 class="text-sm font-medium line-clamp-2 h-10 text-slate-200">${p.name}</h3>
-                        <p class="text-2xl font-black mt-3 italic">₹${p.price.toLocaleString()}</p>
-                        <button onclick="event.stopPropagation(); addToCart('${p._id}')" class="btn-neon py-2.5 text-xs mt-6">Add to Cart</button>
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const res = await fetch(`${API_URL}/products`, { signal: controller.signal });
+                if (res.ok) {
+                    allProducts = await res.json();
+                } else { throw new Error(); }
+            } catch (e) {
+                allProducts = localData;
+            }
+            renderProducts(allProducts);
+        };
+
+        function renderProducts(data) {
+            const grid = document.getElementById('products-grid');
+            if(!data || data.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center flex flex-col items-center">
+                    <p class="text-gray-400 text-lg">No products found matching your search.</p>
+                </div>`;
+                return;
+            }
+            grid.innerHTML = data.map(p => `
+                <div class="amz-card p-3 md:p-4 flex flex-col cursor-pointer rounded-lg shadow-sm" onclick="openProduct('${p._id}')">
+                    <div class="h-40 md:h-52 flex items-center justify-center mb-4 bg-white rounded-lg overflow-hidden p-2">
+                        <img src="${p.image}" class="h-full w-full object-contain mix-blend-multiply">
                     </div>
-                `).join('');
-            } catch (e) { console.error("Server Down"); }
-        }
-
-        function openDetails(id) {
-            const p = allProducts.find(item => item._id === id);
-            document.getElementById('detail-img').src = p.image;
-            document.getElementById('detail-name').innerText = p.name;
-            document.getElementById('detail-price').innerText = `₹${p.price.toLocaleString()}`;
-            document.getElementById('detail-desc').innerText = p.description || "Premium build next-gen product.";
-            document.getElementById('detail-add-btn').onclick = () => { addToCart(id); closeDetails(); };
-            document.getElementById('detail-buy-btn').onclick = () => { addToCart(id); closeDetails(); toggleCart(); };
-            document.getElementById('detail-modal').classList.remove('hidden');
-        }
-
-        function closeDetails() { document.getElementById('detail-modal').classList.add('hidden'); }
-
-        function addToCart(id) {
-            const product = allProducts.find(p => p._id === id);
-            cart.push(product);
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            document.getElementById('cart-badge').innerText = cart.length;
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            document.getElementById('cart-total').innerText = `₹${total.toLocaleString()}`;
-            document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
-                <div class="flex gap-3 border-b border-white/5 pb-3 bg-white/5 p-3 rounded-xl">
-                    <img src="${item.image}" class="w-14 h-14 object-contain rounded-lg">
-                    <div class="flex-1">
-                        <p class="font-bold text-[10px] text-slate-100">${item.name}</p>
-                        <p class="text-cyan-400 text-xs font-black italic">₹${item.price.toLocaleString()}</p>
-                        <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-400 text-[10px] underline">Remove</button>
-                    </div>
+                    <h3 class="text-sm font-medium line-clamp-2 mb-2 h-10 leading-tight">${p.name}</h3>
+                    <div class="text-amazon_orange text-xs mb-2">★★★★☆ <span class="text-blue-500 ml-1">4.2k</span></div>
+                    <p class="text-lg md:text-xl font-bold">₹${p.price.toLocaleString('en-IN')}</p>
+                    <p class="text-[10px] md:text-xs text-green-700 font-bold mt-1">✓ FREE Delivery</p>
                 </div>
             `).join('');
         }
 
-        function toggleCart() { document.getElementById('cart-drawer').classList.toggle('translate-x-full'); }
-        function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('hidden'); }
+        function addToCart(p) {
+            cart.push(p);
+            updateCartUI();
+            
+            // Polish: Animated feedback
+            const badge = document.getElementById('cart-nav-btn');
+            badge.classList.add('cart-animate');
+            setTimeout(() => badge.classList.remove('cart-animate'), 400);
+        }
 
-        async function handleAuth() {
-            const name = document.getElementById('auth-name').value;
-            const email = document.getElementById('auth-email').value;
-            const mobile = document.getElementById('auth-mobile').value;
-            const address = document.getElementById('auth-address').value;
+        // Other functions (updateCartUI, openProduct, etc) should use .toLocaleString('en-IN') for currency
+        function updateCartUI() {
+            document.getElementById('cart-badge').innerText = cart.length;
+            let total = 0;
+            document.getElementById('cart-items').innerHTML = cart.map((item, i) => {
+                total += item.price;
+                return `<div class="flex gap-4 p-3 bg-gray-50 dark:bg-slate-800 rounded-xl relative group">
+                    <img src="${item.image}" class="w-16 h-16 object-contain bg-white rounded-lg border p-1">
+                    <div class="flex-1">
+                        <p class="text-sm font-bold line-clamp-1 pr-4">${item.name}</p>
+                        <p class="text-red-700 font-bold mt-1">₹${item.price.toLocaleString('en-IN')}</p>
+                        <button onclick="cart.splice(${i},1);updateCartUI()" class="text-xs text-blue-500 mt-2 hover:underline">Remove from cart</button>
+                    </div>
+                </div>`;
+            }).join('');
+            document.getElementById('cart-total').innerText = `₹${total.toLocaleString('en-IN')}`;
+        }
 
-            if(!name || !email || !mobile || !address) return alert("Puri details bharo bhai!");
+        function openProduct(id) {
+            const p = allProducts.find(x => x._id === id);
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.remove('hidden');
+            document.getElementById('det-img').src = p.image;
+            document.getElementById('det-name').innerText = p.name;
+            document.getElementById('det-price').innerText = `₹${p.price.toLocaleString('en-IN')}`;
+            document.getElementById('det-price-side').innerText = `₹${p.price.toLocaleString('en-IN')}`;
+            document.getElementById('add-to-cart-btn').onclick = () => { addToCart(p); toggleCart(); };
+            window.scrollTo(0, 0);
+        }
 
-            try {
-                const res = await fetch(`${API_URL}/user/login`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ email, name }) 
-                });
-                const data = await res.json();
-                if(data.success) {
-                    const userData = { name, email, mobile, address }; 
-                    localStorage.setItem('DILICART-users', JSON.stringify(userData));
-                    updateUserUI();
-                    toggleAuthModal();
-                }
-            } catch (e) { alert("Login failed!"); }
+        function showHome() {
+            document.getElementById('view-home').classList.remove('hidden');
+            document.getElementById('view-detail').classList.add('hidden');
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('translate-x-full');
+            document.getElementById('cart-overlay').classList.toggle('hidden');
+        }
+
+        function openDeliveryModal() { document.getElementById('delivery-modal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('delivery-modal').classList.add('hidden'); }
+
+        function saveDetails() {
+            const details = {
+                name: document.getElementById('ship-name').value,
+                phone: document.getElementById('ship-phone').value,
+                address: document.getElementById('ship-address').value
+            };
+            if (!details.name || !details.phone || !details.address) return alert("Please fill all the details!");
+            localStorage.setItem('dg-user-details', JSON.stringify(details));
+            updateUserUI();
+            closeModal();
         }
 
         function updateUserUI() {
-            const user = JSON.parse(localStorage.getItem('DILICART-users'));
-            if(user) document.getElementById('user-display').innerHTML = `Hello, ${user.name.split(' ')[0]}<br><b class="text-white">Profile Loaded</b>`;
+            const user = JSON.parse(localStorage.getItem('dg-user-details'));
+            if (user) {
+                document.getElementById('user-nav-name').innerText = user.name.split(' ')[0];
+                document.getElementById('user-nav-full').innerText = user.name;
+                document.getElementById('user-loc-display').innerText = user.address.substring(0, 15) + "...";
+                document.getElementById('logout-btn').classList.remove('hidden');
+            }
         }
 
-        async function placeOrder() {
-            const user = JSON.parse(localStorage.getItem('DILICART-users'));
-            if(!user) return toggleAuthModal();
-            if(cart.length === 0) return alert("Cart khali hai!");
+        function handleCheckout() {
+            if (cart.length === 0) return alert("Your cart is empty!");
+            const user = JSON.parse(localStorage.getItem('dg-user-details'));
+            if (user) {
+                const msg = new SpeechSynthesisUtterance("Order placed successfully. Thank you " + user.name + " for shopping with Digicart.");
+                window.speechSynthesis.speak(msg);
+                document.getElementById('success-address').innerText = `Your items will be shipped to: ${user.address}`;
+                document.getElementById('success-screen').classList.remove('hidden');
+            } else {
+                openDeliveryModal();
+            }
+        }
 
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            try {
-                const res = await fetch(`${API_URL}/orders`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        userName: user.name,
-                        userEmail: user.email,
-                        address: user.address,
-                        mobile: user.mobile,
-                        items: cart,
-                        totalAmount: total
-                    })
-                });
-                const data = await res.json();
-                if(res.ok) {
-                    document.getElementById('success-screen').classList.remove('hidden');
-                    document.getElementById('final-id').innerText = `TXN-ID: ${data.orderId || 'SUCCESS'}`;
-                    cart = []; 
-                    updateCartUI();
-                }
-            } catch (e) { alert("Order Error!"); }
+        function logout() {
+            localStorage.removeItem('dg-user-details');
+            location.reload();
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
     </script>
 </body>
