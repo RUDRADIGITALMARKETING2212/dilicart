@@ -3,124 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiliCart | Premium Shopping</title>
+    <title>DiliCart | Night Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #eaeded; font-family: Arial, sans-serif; }
-        .bg-amazon-dark { background-color: #131921; }
-        .btn-amazon { background-color: #ffd814; border: 1px solid #fcd200; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .btn-amazon:hover { background-color: #f7ca00; }
+        body { background-color: #020617; color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bg-night-dark { background-color: #0f172a; border-bottom: 1px solid rgba(34, 211, 238, 0.2); }
+        .btn-neon { background: linear-gradient(135deg, #22d3ee, #3b82f6); color: #020617; border-radius: 12px; font-weight: 800; transition: 0.3s; box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3); }
+        .btn-neon:hover { box-shadow: 0 4px 25px rgba(34, 211, 238, 0.6); transform: translateY(-2px); }
+        .product-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); transition: 0.4s; cursor: pointer; border-radius: 20px; }
+        .product-card:hover { border: 1px solid rgba(34, 211, 238, 0.4); box-shadow: 0 10px 40px rgba(34, 211, 238, 0.15); }
         .hidden { display: none; }
-        .product-card { background: white; border: 1px solid transparent; transition: 0.3s; cursor: pointer; }
-        .product-card:hover { border: 1px solid #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(2deg); }
-        }
     </style>
 </head>
 <body>
 
-    <header class="bg-amazon-dark text-white p-2 flex items-center justify-between sticky top-0 z-50">
+    <header class="bg-night-dark text-white p-4 flex items-center justify-between sticky top-0 z-50">
         <div class="flex items-center">
-            <h1 class="text-2xl font-bold ml-4 italic cursor-pointer" onclick="location.reload()">DILICART</h1>
+            <h1 class="text-3xl font-extrabold ml-4 italic tracking-tighter cursor-pointer" onclick="location.reload()">DILICART<span class="text-cyan-400">.</span></h1>
         </div>
 
         <div class="flex items-center gap-6 mr-4">
-            <div onclick="toggleAuthModal()" class="cursor-pointer text-sm">
-                <p id="user-display">Hello, Sign in</p>
-                <p class="font-bold">Account & Lists</p>
+            <div onclick="toggleAuthModal()" class="cursor-pointer text-sm bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:border-cyan-500/50">
+                <p id="user-display" class="text-slate-400">Sign in</p>
+                <p class="font-bold text-xs uppercase tracking-widest text-white">Account</p>
             </div>
             
-            
-            <div onclick="toggleCart()" class="relative cursor-pointer">
-                <span id="cart-badge" class="absolute -top-2 left-4 text-[#febd69] font-bold text-lg">0</span>
-                <span class="text-3xl">🛒</span>
+            <div onclick="toggleCart()" class="relative cursor-pointer flex items-center gap-2 bg-white/5 px-4 py-3 rounded-full border border-white/10">
+                <span id="cart-badge" class="absolute -top-1 -right-1 bg-cyan-500 text-[#020617] font-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                <span class="text-2xl">🛒</span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto p-4">
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <main class="max-w-[1400px] mx-auto p-6">
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             </div>
     </main>
 
-    <div id="auth-modal" class="fixed inset-0 bg-black/70 hidden z-[200] flex items-center justify-center text-black">
-        <div class="bg-white p-8 rounded w-80 shadow-2xl">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-center">Sign-In / Join</h2>
+    <div id="auth-modal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-[#0f172a] p-10 rounded-[2.5rem] w-full max-w-md border border-white/10">
+            <h2 class="text-2xl font-black mb-6 text-center italic tracking-tighter uppercase">Sign-In / <span class="text-cyan-400">Join</span></h2>
             <div class="space-y-4">
-                <input type="text" id="auth-name" placeholder="Your Name" class="w-full border p-2 rounded focus:outline-yellow-500">
-                <input type="email" id="auth-email" placeholder="Email Address" class="w-full border p-2 rounded focus:outline-yellow-500">
-                < input type="mobile number" id ="auth-moblie" placeholder="moblie number" class ="w-full border p-2 rounded focus:outline-yellow-500">
-                < input type="address" id="auth-address" placeholder="address" class ="w-full border p-2 rounded focus:outline-yellow-500">
-                <button onclick="handleAuth()" class="btn-amazon w-full py-2 font-bold shadow-md">Continue</button>
-                <p class="text-[10px] text-center text-gray-500">By continuing, you agree to DiliCart's Conditions of Use.</p>
+                <input type="text" id="auth-name" placeholder="Full Name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition">
+                <input type="email" id="auth-email" placeholder="Email Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition">
+                <input type="text" id="auth-mobile" placeholder="Mobile Number" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition">
+                <textarea id="auth-address" placeholder="Delivery Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none text-white transition h-24"></textarea>
+                <button onclick="handleAuth()" class="btn-neon w-full py-4 text-xl mt-4">Continue</button>
             </div>
         </div>
     </div>
 
-    <div id="detail-modal" class="fixed inset-0 bg-black/80 hidden z-[150] flex items-center justify-center p-4 text-black">
-        <div class="bg-white max-w-4xl w-full rounded-lg flex flex-col md:flex-row overflow-hidden relative">
-            <button onclick="closeDetails()" class="absolute top-4 right-4 text-3xl">&times;</button>
-            <div class="md:w-1/2 p-8 bg-white flex items-center justify-center border-r">
-                <img id="detail-img" src="" class="max-h-80 object-contain">
+    <div id="detail-modal" class="fixed inset-0 bg-black/90 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-[#0f172a] max-w-4xl w-full rounded-[2.5rem] flex flex-col md:flex-row overflow-hidden border border-white/10 relative">
+            <button onclick="closeDetails()" class="absolute top-6 right-6 text-white text-4xl">&times;</button>
+            <div class="md:w-1/2 p-10 bg-white/5 flex items-center justify-center border-r border-white/10">
+                <img id="detail-img" src="" class="max-h-80 object-contain drop-shadow-[0_0_20px_rgba(34,211,238,0.2)]">
             </div>
-            <div class="md:w-1/2 p-8 flex flex-col justify-center">
-                <h2 id="detail-name" class="text-2xl font-bold mb-2"></h2>
-                <p class="text-green-700 font-medium mb-2 italic text-sm underline">FREE Delivery Tomorrow</p>
-                <p id="detail-price" class="text-3xl font-bold mb-4 text-red-800"></p>
-                <p id="detail-desc" class="text-gray-600 mb-8 text-sm"></p>
+            <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                <h2 id="detail-name" class="text-3xl font-bold mb-4 tracking-tighter"></h2>
+                <p id="detail-price" class="text-4xl font-black mb-6 text-white italic"></p>
+                <p id="detail-desc" class="text-slate-400 mb-10 text-sm leading-relaxed"></p>
                 <div class="flex gap-4">
-                    <button id="detail-add-btn" class="btn-amazon flex-1 py-3 font-bold">Add to Cart</button>
-                    <button id="detail-buy-btn" class="bg-[#ffa41c] hover:bg-[#fa8900] rounded-lg flex-1 py-3 font-bold shadow-md">Buy Now</button>
+                    <button id="detail-add-btn" class="flex-1 bg-white/5 border border-white/10 py-4 rounded-xl font-bold hover:bg-white/10">Add to Cart</button>
+                    <button id="detail-buy-btn" class="btn-neon flex-1 py-4 text-lg">Buy Now</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl translate-x-full transition-transform z-[100] flex flex-col text-black border-l">
-        <div class="p-4 border-b bg-gray-100 flex justify-between items-center">
+    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-80 bg-[#0f172a] shadow-2xl translate-x-full transition-transform z-[100] flex flex-col border-l border-white/10">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center">
             <h3 class="font-bold">Shopping Cart</h3>
-            <button onclick="toggleCart()" class="text-2xl">&times;</button>
+            <button onclick="toggleCart()" class="text-3xl">&times;</button>
         </div>
-        <div id="cart-items" class="p-4 flex-1 overflow-y-auto space-y-4"></div>
-        <div class="p-4 border-t bg-gray-50">
-            <p class="text-lg font-bold">Subtotal: <span id="cart-total" class="text-red-700">₹0</span></p>
-            <button onclick="placeOrder()" class="btn-amazon w-full py-2 mt-4 font-bold">Checkout (COD)</button>
-        </div>
-    </div>
-
-    <div id="admin-modal" class="fixed inset-0 bg-black/90 hidden z-[400] overflow-y-auto p-4 text-black">
-        <div class="bg-white max-w-5xl mx-auto rounded-lg p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold border-l-4 border-red-600 pl-2">Admin Panel</h2>
-                <button onclick="toggleAdminModal()" class="text-3xl">&times;</button>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-gray-100 p-4 rounded shadow-inner">
-                    <h3 class="font-bold mb-4 text-blue-700 underline">Add Product</h3>
-                    <input type="text" id="p-name" placeholder="Name" class="w-full border p-2 mb-2">
-                    <input type="number" id="p-price" placeholder="Price" class="w-full border p-2 mb-2">
-                    <input type="text" id="p-img" placeholder="Image URL" class="w-full border p-2 mb-2">
-                    <textarea id="p-desc" placeholder="Product Description" class="w-full border p-2 mb-4"></textarea>
-                    <button onclick="adminAddProduct()" class="bg-green-600 text-white w-full py-2 font-bold hover:bg-green-700 transition">Save to Database</button>
-                </div>
-                <div class="bg-gray-100 p-4 rounded shadow-inner">
-                    <h3 class="font-bold mb-4 text-blue-700 underline">Incoming Orders</h3>
-                    <div id="admin-orders-list" class="space-y-2 h-72 overflow-y-auto"></div>
-                </div>
-            </div>
+        <div id="cart-items" class="p-6 flex-1 overflow-y-auto space-y-4"></div>
+        <div class="p-6 border-t border-white/10 bg-white/5">
+            <p class="text-xl font-bold">Total: <span id="cart-total" class="text-cyan-400 italic">₹0</span></p>
+            <button onclick="placeOrder()" class="btn-neon w-full py-4 mt-6 text-lg">Checkout (COD)</button>
         </div>
     </div>
 
-    <div id="success-screen" class="fixed inset-0 bg-black/90 hidden z-[500] flex items-center justify-center p-4 text-black">
-        <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl border-4 border-green-500">
-            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold">✓</div>
-            <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
-            <p class="text-slate-500 text-sm mb-6">Aapka order successfully place ho gaya hai via Cash on Delivery.</p>
-            <div id="final-id" class="bg-slate-100 p-3 rounded-xl font-mono text-xs font-bold text-slate-600 mb-6">ORDER-ID: ...</div>
-            <button onclick="location.reload()" class="w-full bg-amazon-dark text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-gray-800 transition-all">Continue Shopping</button>
+    <div id="success-screen" class="fixed inset-0 bg-black/95 hidden z-[500] flex items-center justify-center p-6">
+        <div class="bg-[#0f172a] p-10 rounded-[3rem] max-w-sm w-full text-center border-4 border-cyan-500 shadow-[0_0_50px_rgba(34,211,238,0.3)]">
+            <div class="w-20 h-20 bg-cyan-500 text-[#020617] rounded-full flex items-center justify-center mx-auto mb-6 text-4xl font-bold italic">OK</div>
+            <h2 class="text-2xl font-black mb-2 uppercase italic tracking-tighter">Order Success!</h2>
+            <p class="text-slate-500 text-sm mb-8">Details have been sent to our Executive Dashboard.</p>
+            <div id="final-id" class="bg-black/50 p-4 rounded-xl font-mono text-xs text-cyan-400 border border-white/10 mb-6"></div>
+            <button onclick="location.reload()" class="w-full bg-white text-[#020617] py-4 rounded-2xl font-black uppercase">Continue</button>
         </div>
     </div>
 
@@ -136,14 +106,14 @@
                 const res = await fetch(`${API_URL}/products`);
                 allProducts = await res.json();
                 document.getElementById('products-grid').innerHTML = allProducts.map(p => `
-                    <div class="product-card p-4 rounded flex flex-col text-black shadow-sm" onclick="openDetails('${p._id}')">
-                        <img src="${p.image}" class="h-44 object-contain mb-4">
-                        <h3 class="text-sm font-medium line-clamp-2 h-10">${p.name}</h3>
-                        <p class="text-xl font-bold mt-2">₹${p.price.toLocaleString()}</p>
-                        <button onclick="event.stopPropagation(); addToCart('${p._id}')" class="btn-amazon py-1.5 text-xs mt-4 font-bold">Add to Cart</button>
+                    <div class="product-card p-6 flex flex-col" onclick="openDetails('${p._id}')">
+                        <img src="${p.image}" class="h-44 object-contain mb-6 drop-shadow-[0_5px_15px_rgba(255,255,255,0.05)]">
+                        <h3 class="text-sm font-medium line-clamp-2 h-10 text-slate-200">${p.name}</h3>
+                        <p class="text-2xl font-black mt-3 italic">₹${p.price.toLocaleString()}</p>
+                        <button onclick="event.stopPropagation(); addToCart('${p._id}')" class="btn-neon py-2.5 text-xs mt-6">Add to Cart</button>
                     </div>
                 `).join('');
-            } catch (e) { console.error("Server connection lost."); }
+            } catch (e) { console.error("Server Down"); }
         }
 
         function openDetails(id) {
@@ -151,7 +121,7 @@
             document.getElementById('detail-img').src = p.image;
             document.getElementById('detail-name').innerText = p.name;
             document.getElementById('detail-price').innerText = `₹${p.price.toLocaleString()}`;
-            document.getElementById('detail-desc').innerText = p.description || "Premium quality product.";
+            document.getElementById('detail-desc').innerText = p.description || "Premium build next-gen product.";
             document.getElementById('detail-add-btn').onclick = () => { addToCart(id); closeDetails(); };
             document.getElementById('detail-buy-btn').onclick = () => { addToCart(id); closeDetails(); toggleCart(); };
             document.getElementById('detail-modal').classList.remove('hidden');
@@ -170,12 +140,12 @@
             const total = cart.reduce((s, i) => s + i.price, 0);
             document.getElementById('cart-total').innerText = `₹${total.toLocaleString()}`;
             document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
-                <div class="flex gap-2 border-b pb-2 bg-white p-2 rounded shadow-sm">
-                    <img src="${item.image}" class="w-12 h-12 object-contain">
+                <div class="flex gap-3 border-b border-white/5 pb-3 bg-white/5 p-3 rounded-xl">
+                    <img src="${item.image}" class="w-14 h-14 object-contain rounded-lg">
                     <div class="flex-1">
-                        <p class="font-bold text-[10px] line-clamp-1">${item.name}</p>
-                        <p class="text-red-700 text-xs font-bold">₹${item.price.toLocaleString()}</p>
-                        <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-blue-600 text-[10px] underline">Remove</button>
+                        <p class="font-bold text-[10px] text-slate-100">${item.name}</p>
+                        <p class="text-cyan-400 text-xs font-black italic">₹${item.price.toLocaleString()}</p>
+                        <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-400 text-[10px] underline">Remove</button>
                     </div>
                 </div>
             `).join('');
@@ -183,97 +153,64 @@
 
         function toggleCart() { document.getElementById('cart-drawer').classList.toggle('translate-x-full'); }
         function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('hidden'); }
-        function toggleAdminModal() { 
-            document.getElementById('admin-modal').classList.toggle('hidden'); 
-            if(!document.getElementById('admin-modal').classList.contains('hidden')) fetchAdminOrders();
-        }
 
         async function handleAuth() {
-    const name = document.getElementById('auth-name').value;
-    const email = document.getElementById('auth-email').value;
-    const address = document.getElementById('Address').value; // Naya
-    const mobile = document.getElementById('mobile number').value; // Naya
+            const name = document.getElementById('auth-name').value;
+            const email = document.getElementById('auth-email').value;
+            const mobile = document.getElementById('auth-mobile').value;
+            const address = document.getElementById('auth-address').value;
 
-    if(!name || !email || !address || !mobile) return alert("Saare fields bhariye!");
+            if(!name || !email || !mobile || !address) return alert("Puri details bharo bhai!");
 
-    const res = await fetch(`${API_URL}/user/login`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email, name }) // Backend check
-    });
-    
-    const data = await res.json();
-    if(data.success) {
-        // Pura data save karein local storage mein
-        const userData = { ...data.user, address, mobile }; 
-        localStorage.setItem('DILICART-users', JSON.stringify(userData));
-        updateUserUI();
-        toggleAuthModal();
-    }
-}
+            try {
+                const res = await fetch(`${API_URL}/user/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, name }) 
+                });
+                const data = await res.json();
+                if(data.success) {
+                    const userData = { name, email, mobile, address }; 
+                    localStorage.setItem('DILICART-users', JSON.stringify(userData));
+                    updateUserUI();
+                    toggleAuthModal();
+                }
+            } catch (e) { alert("Login failed!"); }
+        }
+
         function updateUserUI() {
             const user = JSON.parse(localStorage.getItem('DILICART-users'));
-            if(user) document.getElementById('user-display').innerHTML = `Hello, ${user.name.split(' ')[0]}<br><b class="text-white">Account & Lists</b>`;
+            if(user) document.getElementById('user-display').innerHTML = `Hello, ${user.name.split(' ')[0]}<br><b class="text-white">Profile Loaded</b>`;
         }
 
-       async function placeOrder() {
-    const user = JSON.parse(localStorage.getItem('DILICART-users'));
-    if(!user) return toggleAuthModal();
-    if(cart.length === 0) return alert("Cart khali hai!");
+        async function placeOrder() {
+            const user = JSON.parse(localStorage.getItem('DILICART-users'));
+            if(!user) return toggleAuthModal();
+            if(cart.length === 0) return alert("Cart khali hai!");
 
-    const total = cart.reduce((s, i) => s + i.price, 0);
-    
-    try {
-        const res = await fetch(`${API_URL}/orders`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                userName: user.name,
-                userEmail: user.email,
-                address: user.address, // Bhej rahe hain
-                mobile: user.mobile,   // Bhej rahe hain
-                items: cart,
-                totalAmount: total
-            })
-        });
-
-        const data = await res.json();
-        if(res.ok || data.success) {
-            document.getElementById('success-screen').classList.remove('hidden');
-            document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || 'SUCCESS'}`;
-            cart = []; 
-            updateCartUI();
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        userName: user.name,
+                        userEmail: user.email,
+                        address: user.address,
+                        mobile: user.mobile,
+                        items: cart,
+                        totalAmount: total
+                    })
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    document.getElementById('success-screen').classList.remove('hidden');
+                    document.getElementById('final-id').innerText = `TXN-ID: ${data.orderId || 'SUCCESS'}`;
+                    cart = []; 
+                    updateCartUI();
+                }
+            } catch (e) { alert("Order Error!"); }
         }
-    } catch (e) { alert("Order bhejte waqt error aaya!"); }
-}
-        async function adminAddProduct() {
-            const product = {
-                name: document.getElementById('p-name').value,
-                price: Number(document.getElementById('p-price').value),
-                image: document.getElementById('p-img').value,
-                description: document.getElementById('p-desc').value
-            };
-            const res = await fetch(`${API_URL}/admin/add-product`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(product)
-            });
-            if(res.ok) { alert("Product Added!"); location.reload(); }
-        }
-
-async function fetchAdminOrders() {
-    const res = await fetch(`${API_URL}/admin/orders`);
-    const orders = await res.json();
-    document.getElementById('admin-orders-list').innerHTML = orders.map(o => `
-        <div class="p-3 border rounded bg-white text-xs mb-2 shadow-sm border-l-4 border-yellow-500">
-            <p><b>Customer:</b> ${o.userName}</p>
-            <p><b>Mobile:</b> ${o.mobile || 'N/A'}</p>
-            <p><b>Address:</b> ${o.address || 'N/A'}</p>
-            <p><b>Total:</b> ₹${o.totalAmount.toLocaleString()}</p>
-            <p class="mt-1"><span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-bold">${o.status}</span></p>
-        </div>
-    `).join('');
-}
     </script>
 </body>
 </html>
