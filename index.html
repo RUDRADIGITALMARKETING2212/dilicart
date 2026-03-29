@@ -228,32 +228,42 @@
         }
 
         async function placeOrder() {
-            const user = JSON.parse(localStorage.getItem('DILICART-users'));
-            if(!user) return toggleAuthModal();
-            if(cart.length === 0) return alert("Cart is empty!");
+    const user = JSON.parse(localStorage.getItem('DILICART-users'));
+    if(!user) {
+        alert("Pehle Sign-in karein!");
+        return toggleAuthModal();
+    }
+    if(cart.length === 0) return alert("Cart khali hai!");
 
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            const res = await fetch(`${API_URL}/orders`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    userName: user.name,
-                    userEmail: user.email,
-                    items: cart,
-                    totalAmount: total
-                })
-            });
+    const total = cart.reduce((s, i) => s + i.price, 0);
+    
+    try {
+        const res = await fetch(`${API_URL}/orders`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                userName: user.name,
+                userEmail: user.email,
+                items: cart,
+                totalAmount: total
+            })
+        });
 
-            const data = await res.json();
-            if(data.success) {
-                document.getElementById('success-screen').classList.remove('hidden');
-                document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId}`;
-                cart = []; updateCartUI();
-            } else {
-                alert("Order failed: " + data.message);
-            }
+        const data = await res.json();
+        
+        if(res.ok || data.success) {
+            // Modal ko show karne ke liye 'hidden' class remove karein
+            document.getElementById('success-screen').classList.remove('hidden');
+            document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || 'SUCCESS'}`;
+            cart = []; 
+            updateCartUI();
+        } else {
+            alert("Order failed: " + (data.message || "Server error"));
         }
-
+    } catch (e) {
+        alert("Server connection issue. Please try again.");
+    }
+}
         async function adminAddProduct() {
             const product = {
                 name: document.getElementById('p-name').value,
@@ -281,6 +291,15 @@
                 </div>
             `).join('');
         }
+        <div id="success-screen" class="fixed inset-0 bg-black/90 hidden z-[500] flex items-center justify-center p-4 text-black">
+    <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl">
+        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold">✓</div>
+        <h2 class="text-2xl font-black mb-2">Order Confirmed!</h2>
+        <p class="text-slate-500 text-sm mb-6">Your order has been placed successfully via Cash on Delivery.</p>
+        <div id="final-id" class="bg-slate-100 p-3 rounded-xl font-mono text-xs font-bold text-slate-600 mb-6"></div>
+        <button onclick="location.reload()" class="w-full bg-amazon-dark text-white py-4 rounded-2xl font-bold shadow-lg">Continue Shopping</button>
+    </div>
+</div>
     </script>
 </body>
 </html>
