@@ -1,350 +1,558 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KRIPACART | Premium Shopping</title>
+    <title>DiliCart | Everything You Need, Right Here.</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        amazon_blue: '#131921',
-                        amazon_light: '#232f3e',
-                        amazon_yellow: '#febd69',
-                        amazon_orange: '#f3a847',
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #eaeded; color: #0f1111; transition: background 0.3s; scroll-behavior: smooth; }
-        .dark body { background-color: #0f172a; color: #f8fafc; }
-        .search-container:focus-within { ring: 2px solid #f3a847; box-shadow: 0 0 8px rgba(243, 168, 71, 0.5); }
-        .amz-card { background: white; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
-        .dark .amz-card { background: #1e293b; border-color: #334155; }
-        .amz-card:hover { transform: translateY(-4px); border-color: #f3a847; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        body { background-color: #f7f9f8; font-family: Arial, sans-serif; }
+        .theme-dark-green { background-color: #1a3a2a; }
+        .text-theme-green { color: #1a3a2a; }
+        .theme-accent { background-color: #e5a93b; }
+        .btn-primary { background-color: #e5a93b; color: white; transition: 0.2s; }
+        .btn-primary:hover { background-color: #cd932b; }
+        .hidden { display: none; }
         
-        /* Skeleton Animation */
-        .skeleton { background: #e2e8f0; position: relative; overflow: hidden; border-radius: 4px; }
-        .dark .skeleton { background: #334155; }
-        .skeleton::after {
-            content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
-        
-        /* Cart Shake */
-        @keyframes shake {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); color: #f3a847; }
-        }
-        .cart-animate { animation: shake 0.4s ease-out; }
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #1a3a2a; border-radius: 4px; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="text-gray-800 antialiased">
 
-    <header class="bg-amazon_blue text-white sticky top-0 z-[2000] shadow-md">
-        <div class="max-w-[1500px] mx-auto flex items-center gap-2 md:gap-4 px-4 py-2">
-            <div class="p-2 border border-transparent hover:border-white cursor-pointer flex items-center gap-1 shrink-0" onclick="showHome()">
-                <span class="text-xl md:text-2xl font-bold tracking-tighter">KRIPACART</span>
-                <span class="text-amazon_yellow text-xs mt-2 italic font-bold">.in</span>
-            </div>
+    <div class="bg-[#11261c] text-white text-[11px] py-1.5 text-center font-medium tracking-wide">
+        🚀 Free Shipping on Orders Above ₹499 | Cash on Delivery Available | Easy Returns
+    </div>
 
-            <div class="hidden lg:flex items-center gap-1 p-2 border border-transparent hover:border-white cursor-pointer shrink-0" onclick="openDeliveryModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-                <div class="text-xs">
-                    <p class="text-gray-400">Deliver to <span id="user-nav-name">Guest</span></p>
-                    <p class="font-bold truncate max-w-[100px]" id="user-loc-display">Select address</p>
+    <header class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between gap-4 md:gap-8">
+            
+            <div class="flex items-center cursor-pointer select-none gap-2.5 shrink-0" onclick="location.reload()">
+                <img src="logo.png" alt="Logo" class="h-10 w-auto object-contain">
+                <div class="flex items-center font-black tracking-wider text-xl">
+                    <span class="text-theme-green font-extrabold tracking-tight">DILI</span>
+                    <span class="text-amber-500 font-extrabold tracking-tight">CART</span>
                 </div>
             </div>
 
-            <div class="flex-1 flex h-10 overflow-hidden rounded-md search-container">
-                <input type="text" id="main-search" placeholder="Search Digicart.in" class="flex-1 px-4 text-black outline-none text-sm md:text-base">
-                <button class="bg-amazon_yellow hover:bg-amazon_orange px-3 md:px-5 flex items-center justify-center text-amazon_blue transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <div class="flex-1 max-w-2xl hidden md:flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-emerald-700 transition">
+                <input type="text" placeholder="Search for products..." class="w-full px-4 py-2 text-sm outline-none">
+                <select class="bg-gray-50 px-3 text-xs text-gray-500 border-l border-gray-200 outline-none h-full py-2">
+                    <option>All Categories</option>
+                </select>
+                <button class="bg-[#1a3a2a] text-white px-5 py-2.5 hover:bg-emerald-900 transition">
+                    🔍
                 </button>
             </div>
 
-            <div class="hidden sm:block p-2 border border-transparent hover:border-white cursor-pointer shrink-0" onclick="openDeliveryModal()">
-                <p class="text-xs">Hello, <span id="user-nav-full" class="font-bold">Sign in</span></p>
-                <p class="text-sm font-bold">Account</p>
-            </div>
+            <div class="flex items-center gap-4 md:gap-6 shrink-0">
+                <div onclick="toggleAuthModal()" class="cursor-pointer flex flex-col items-center text-center text-gray-600 hover:text-emerald-800">
+                    <span class="text-xl">👤</span>
+                    <span id="user-display" class="text-[11px] font-medium mt-0.5">Login</span>
+                </div>
+                
+                
 
-            <button onclick="toggleTheme()" class="p-2 border border-transparent hover:border-white text-xl">
-                <span id="theme-icon">🌙</span>
-            </button>
-
-            <div id="cart-nav-btn" class="flex items-end p-2 border border-transparent hover:border-white cursor-pointer relative shrink-0" onclick="toggleCart()">
-                <div class="relative">
-                    <span id="cart-badge" class="absolute -top-2 left-1/2 -translate-x-1/2 text-amazon_orange font-bold text-lg leading-none">0</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
+                <div onclick="toggleCart()" class="relative cursor-pointer flex flex-col items-center text-gray-600 hover:text-emerald-800">
+                    <div class="relative">
+                        <span id="cart-badge" class="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">0</span>
+                        <span class="text-2xl">🛍️</span>
+                    </div>
+                    <span class="text-[11px] font-medium mt-0.5">Cart</span>
                 </div>
             </div>
+
         </div>
+
+        <nav class="border-t border-gray-100 bg-white">
+            <div class="max-w-[1400px] mx-auto px-4 py-2 flex items-center gap-8 text-xs font-semibold text-gray-700 overflow-x-auto whitespace-nowrap">
+                <button class="flex items-center gap-2 text-theme-green bg-emerald-50 px-3 py-1.5 rounded-md font-bold">
+                    ☰ Shop by Category
+                </button>
+                <a href="#" class="text-emerald-700 border-b-2 border-emerald-700 pb-0.5">Home</a>
+                <a href="#" class="hover:text-emerald-700">Categories</a>
+                <a href="#" class="hover:text-emerald-700">Best Sellers</a>
+                <a href="#" class="hover:text-emerald-700">New Arrivals</a>
+                <a href="#" class="hover:text-emerald-700">Offers</a>
+                <a href="#" class="hover:text-emerald-700">Blog</a>
+                <a href="#" class="hover:text-emerald-700">Contact Us</a>
+            </div>
+        </nav>
     </header>
 
-    <main class="max-w-[1500px] mx-auto pb-10">
-        <section class="relative h-[180px] md:h-[400px] mb-[-80px] md:mb-[-150px]">
-            <img src="banner.jpg" 
-                 class="w-full h-full object-cover [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]">
+    <main class="max-w-[1400px] mx-auto p-4 space-y-12">
+        
+        <section class="bg-[#f0f4f1] rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+            <div class="space-y-6 max-w-xl z-10">
+                <span class="bg-emerald-800/10 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Welcome to DiliCart</span>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                    Your One-Stop Shop <br><span class="text-emerald-800">for Everything!</span>
+                </h2>
+                <p class="text-gray-600 text-sm md:text-base leading-relaxed">Discover quality products across multiple categories at the best prices. Shop smart, Shop DiliCart.</p>
+                <button onclick="document.getElementById('products-grid').scrollIntoView({behavior: 'smooth'})" class="btn-primary px-8 py-3 rounded-lg font-bold text-sm shadow-md shadow-amber-600/20">Shop Now →</button>
+                
+                <div class="flex items-center gap-6 pt-4 text-xs font-medium text-gray-500 border-t border-gray-200">
+                    <span>🏷️ Best Prices</span>
+                    <span>⭐ Top Quality</span>
+                    <span>🛡️ Trusted Shopping</span>
+                </div>
+            </div>
+            
+            <div class="flex-1 flex justify-center items-center relative min-h-[300px] w-full">
+                <div class="relative w-full max-w-[420px]">
+                    <img src="image.png" 
+                         alt="Product Spotlight" 
+                         class="w-full h-auto drop-shadow-2xl rounded-xl object-contain">
+                </div>
+            </div>
         </section>
 
-        <div id="view-home" class="relative z-10 px-4">
-            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="skeleton h-64 w-full"></div>
-                <div class="skeleton h-64 w-full"></div>
-                <div class="skeleton h-64 w-full"></div>
-                <div class="skeleton h-64 w-full"></div>
+        <section class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Shop by Category</h3>
+                <a href="#" class="text-xs font-bold text-emerald-800 hover:underline">View All Categories ➔</a>
+            </div>
+            <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-4 text-center">
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">🎧</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Electronics</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">🍳</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Home & Kitchen</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">👕</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Fashion</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">🧴</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Beauty Care</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">🧸</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Baby & Kids</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">📚</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Stationery</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mx-auto flex items-center justify-center p-3 shadow-sm border border-gray-100 group-hover:border-emerald-600 transition">⚽</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">Sports</p>
+                </div>
+                <div class="cursor-pointer group">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-full mx-auto flex items-center justify-center p-3 shadow-sm group-hover:bg-gray-200 transition">⚙️</div>
+                    <p class="text-[11px] font-bold mt-2 text-gray-700">More</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-5 border border-gray-100 rounded-xl shadow-sm text-xs text-gray-600">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🚚</span>
+                <div><h5 class="font-bold text-gray-900">Free Shipping</h5><p class="text-[11px]">On orders above ₹499</p></div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">💵</span>
+                <div><h5 class="font-bold text-gray-900">Cash on Delivery</h5><p class="text-[11px]">Pay on delivery safely</p></div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🔄</span>
+                <div><h5 class="font-bold text-gray-900">Easy Returns</h5><p class="text-[11px]">7 days return window</p></div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🛡️</span>
+                <div><h5 class="font-bold text-gray-900">Secure Payments</h5><p class="text-[11px]">100% encrypted gateway</p></div>
             </div>
         </div>
 
-        <div id="view-detail" class="hidden bg-white dark:bg-slate-900 p-4 md:p-10 rounded shadow-lg mt-24 md:mt-40 mx-4 border dark:border-slate-700">
-            <button onclick="showHome()" class="text-sm text-blue-600 hover:text-amazon_orange transition-colors mb-6 flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                Back to results
-            </button>
-            <div class="flex flex-col lg:flex-row gap-10">
-                <div class="lg:w-1/3 flex items-center justify-center p-4 bg-white rounded-xl">
-                    <img id="det-img" src="" class="max-h-[300px] md:max-h-[450px] object-contain hover:scale-105 transition-transform duration-500">
-                </div>
-                <div class="lg:w-1/2">
-                    <h2 id="det-name" class="text-xl md:text-2xl font-semibold mb-2 leading-tight"></h2>
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="text-amazon_orange">★★★★☆</span>
-                        <span class="text-blue-500 text-sm">4,281 ratings</span>
+        <section class="space-y-4">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div class="flex items-center gap-4">
+                    <h3 class="text-xl font-black text-slate-900">Deal of the Day</h3>
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-white">
+                        <span class="bg-[#1a3a2a] px-2 py-1 rounded">02 <span class="text-[9px] font-light">Hrs</span></span> :
+                        <span class="bg-[#1a3a2a] px-2 py-1 rounded">45 <span class="text-[9px] font-light">Min</span></span> :
+                        <span class="bg-[#1a3a2a] px-2 py-1 rounded">18 <span class="text-[9px] font-light">Sec</span></span>
                     </div>
-                    <div class="py-4 border-y border-gray-100 dark:border-slate-700">
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-red-600 text-2xl font-light">-25%</span>
-                            <span id="det-price" class="text-3xl font-medium"></span>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">M.R.P: <span class="line-through">₹40,000</span></p>
-                    </div>
-                    <div class="mt-6 space-y-4">
-                        <h4 class="font-bold">About this item:</h4>
-                        <ul class="list-disc ml-5 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                            <li>Premium build quality with ergonomic design.</li>
-                            <li>Ultra-fast performance for seamless multitasking.</li>
-                            <li>12 Months manufacturer warranty included.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="lg:w-1/4 border rounded-xl p-6 h-fit space-y-4 shadow-sm bg-gray-50 dark:bg-slate-800 dark:border-slate-700">
-                    <p id="det-price-side" class="text-2xl font-bold"></p>
-                    <p class="text-green-700 font-bold">In Stock</p>
-                    <p class="text-sm italic">Ships from and sold by Digicart India.</p>
-                    <button id="add-to-cart-btn" class="w-full py-3 bg-amazon_yellow hover:bg-amazon_orange rounded-full text-sm font-bold shadow transition-all active:scale-95">Add to Cart</button>
-                    <button onclick="handleCheckout()" class="w-full py-3 bg-amazon_orange hover:bg-orange-500 rounded-full text-sm font-bold shadow transition-all active:scale-95">Buy Now</button>
                 </div>
             </div>
-        </div>
+            
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <section class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-black text-slate-900">New Arrivals</h3>
+                <span class="text-xs font-bold text-emerald-800 cursor-pointer">View All →</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div class="bg-white p-3 rounded-lg border border-gray-100 text-center text-xs">
+                    <div class="h-28 bg-gray-50 flex items-center justify-center mb-2 rounded">🧴</div>
+                    <p class="font-medium truncate text-gray-700">Aroma Diffuser</p>
+                    <p class="font-extrabold text-emerald-800 mt-1">₹799</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-100 text-center text-xs">
+                    <div class="h-28 bg-gray-50 flex items-center justify-center mb-2 rounded">👜</div>
+                    <p class="font-medium truncate text-gray-700">Hand Bag</p>
+                    <p class="font-extrabold text-emerald-800 mt-1">₹1,299</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-100 text-center text-xs">
+                    <div class="h-28 bg-gray-50 flex items-center justify-center mb-2 rounded">👟</div>
+                    <p class="font-medium truncate text-gray-700">Casual Sneakers</p>
+                    <p class="font-extrabold text-emerald-800 mt-1">₹1,499</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-100 text-center text-xs">
+                    <div class="h-28 bg-gray-50 flex items-center justify-center mb-2 rounded">🧪</div>
+                    <p class="font-medium truncate text-gray-700">Face Serum</p>
+                    <p class="font-extrabold text-emerald-800 mt-1">₹349</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-100 text-center text-xs">
+                    <div class="h-28 bg-gray-50 flex items-center justify-center mb-2 rounded">📖</div>
+                    <p class="font-medium truncate text-gray-700">Atomic Habits</p>
+                    <p class="font-extrabold text-emerald-800 mt-1">₹299</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-100 text-center text-xs">
+                    <div class="h-28 bg-gray-50 flex items-center justify-center mb-2 rounded">💡</div>
+                    <p class="font-medium truncate text-gray-700">Desk Lamp</p>
+                    <p class="font-extrabold text-emerald-800 mt-1">₹899</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="theme-dark-green rounded-xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+            <div class="flex items-center gap-4">
+                <span class="text-4xl">✉️</span>
+                <div>
+                    <h4 class="text-lg font-bold">Be the first to know!</h4>
+                    <p class="text-xs text-gray-300">Get exclusive offers, new arrivals and more inside your inbox.</p>
+                </div>
+            </div>
+            <div class="w-full md:w-auto flex items-center bg-white rounded-lg p-1 max-w-md flex-1">
+                <input type="email" placeholder="Enter your email address" class="w-full text-black px-3 py-2 text-xs outline-none">
+                <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-5 py-2 rounded-md whitespace-nowrap transition">Subscribe</button>
+            </div>
+        </section>
     </main>
 
-    <div id="cart-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[2500]" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full max-w-[380px] bg-white dark:bg-slate-900 z-[3000] translate-x-full transition-transform duration-500 p-6 flex flex-col shadow-2xl">
-        <div class="flex justify-between items-center mb-6 border-b pb-4">
-            <h2 class="text-xl font-bold">Shopping Basket</h2>
-            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full">✕</button>
+    <footer class="bg-white border-t border-gray-100 mt-12 py-6 text-xs text-gray-500">
+        <div class="max-w-[1400px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>🛡️ <b class="text-gray-800">100% Original Products</b><p class="text-[11px]">Sourced directly from brands</p></div>
+            <div>👥 <b class="text-gray-800">Trusted by Thousands</b><p class="text-[11px]">Join our ecosystem community</p></div>
+            <div>🎧 <b class="text-gray-800">Top Rated Support</b><p class="text-[11px]">We are here to help 24/7</p></div>
+            <div>🇮🇳 <b class="text-gray-800">Made with ❤️ in India</b><p class="text-[11px]">Proudly supporting local trades</p></div>
         </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto space-y-4 pr-2"></div>
-        <div class="pt-6 border-t mt-4">
-            <div class="flex justify-between mb-6">
-                <span class="text-lg">Subtotal:</span>
-                <span id="cart-total" class="font-bold text-red-700 text-xl">₹0</span>
+    </footer>
+
+    <div id="auth-modal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-xl w-85 text-black shadow-2xl border border-gray-100">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-lg font-bold text-theme-green">Sign-In / Join</h2>
+                <button onclick="toggleAuthModal()" class="text-xl font-light text-gray-400 hover:text-gray-600">&times;</button>
             </div>
-            <button onclick="handleCheckout()" class="w-full py-4 bg-amazon_yellow hover:bg-amazon_orange rounded-xl font-bold shadow-lg transition-colors">Proceed to Checkout</button>
+            <div class="space-y-3.5">
+                <input type="text" id="auth-name" placeholder="Your Name" class="w-full border p-2 text-sm rounded-lg focus:outline-emerald-800">
+                <input type="email" id="auth-email" placeholder="Email Address" class="w-full border p-2 text-sm rounded-lg focus:outline-emerald-800">
+                <input type="text" id="auth-address" placeholder="Shipping Address" class="w-full border p-2 text-sm rounded-lg focus:outline-emerald-800">
+                <input type="tel" id="auth-mobile" placeholder="Mobile Number" class="w-full border p-2 text-sm rounded-lg focus:outline-emerald-800">
+                <button onclick="handleAuth()" class="btn-primary w-full py-2.5 rounded-lg font-bold text-sm mt-2 shadow">Continue</button>
+                <p class="text-[10px] text-center text-gray-400">By continuing, you agree to DiliCart's Conditions of Use.</p>
+            </div>
         </div>
     </div>
 
-    <div id="delivery-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[4000] flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl scale-95 transition-transform">
-            <div class="bg-amazon_light text-white p-4 font-bold">Delivery Settings</div>
-            <div class="p-6 space-y-4">
-                <input type="text" id="ship-name" placeholder="Full Name" class="w-full p-3 border rounded-xl dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 ring-amazon_yellow">
-                <input type="tel" id="ship-phone" placeholder="Mobile Number" class="w-full p-3 border rounded-xl dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 ring-amazon_yellow">
-                <textarea id="ship-address" placeholder="Full Address with Pincode" class="w-full p-3 border rounded-xl h-24 dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 ring-amazon_yellow"></textarea>
-                <button onclick="saveDetails()" class="w-full py-3 bg-amazon_yellow font-bold rounded-xl shadow-md hover:bg-amazon_orange transition-all">Update Details</button>
-                <button onclick="logout()" id="logout-btn" class="hidden w-full text-xs text-red-500 hover:underline">Sign Out</button>
+    <div id="detail-modal" class="fixed inset-0 bg-black/70 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white max-w-4xl w-full rounded-2xl flex flex-col md:flex-row overflow-hidden relative shadow-2xl border border-gray-100">
+            <button onclick="closeDetails()" class="absolute top-4 right-4 text-3xl font-light text-gray-400 hover:text-red-600 transition">&times;</button>
+            <div class="md:w-1/2 p-8 bg-gray-50 flex items-center justify-center">
+                <img id="detail-img" src="" class="max-h-72 object-contain mix-blend-multiply">
             </div>
-            <button onclick="closeModal()" class="w-full p-3 text-sm text-gray-400 hover:text-gray-600 transition-colors">Maybe Later</button>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                <h2 id="detail-name" class="text-xl font-black text-gray-900 mb-2"></h2>
+                <p class="text-emerald-700 font-bold mb-2 text-xs tracking-wide">✨ FREE Delivery Tomorrow</p>
+                <p id="detail-price" class="text-2xl font-black mb-4 text-emerald-900"></p>
+                <p id="detail-desc" class="text-gray-500 mb-6 text-xs leading-relaxed"></p>
+                <div class="flex gap-3">
+                    <button id="detail-add-btn" class="bg-gray-100 hover:bg-gray-200 border border-gray-200 font-bold text-xs text-gray-800 flex-1 py-3 rounded-lg transition">Add to Cart</button>
+                    <button id="detail-buy-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex-1 py-3 rounded-lg transition shadow-md">Buy Now</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="success-screen" class="fixed inset-0 bg-white dark:bg-slate-900 hidden z-[5000] flex flex-col items-center justify-center text-center p-6">
-        <div class="w-24 h-24 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center text-5xl mb-6 animate-bounce">✓</div>
-        <h2 class="text-3xl font-bold mb-2">Order Confirmed!</h2>
-        <p id="success-address" class="text-gray-500 dark:text-gray-400 mb-8 max-w-xs"></p>
-        <button onclick="location.reload()" class="bg-amazon_yellow px-12 py-3 rounded-full font-bold hover:bg-amazon_orange shadow-lg transition-transform active:scale-95">Continue Shopping</button>
+    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl translate-x-full transition-transform duration-300 z-[100] flex flex-col text-black">
+        <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+            <h3 class="font-bold text-theme-green flex items-center gap-2">🛍️ Shopping Cart</h3>
+            <button onclick="toggleCart()" class="text-2xl font-light text-gray-400 hover:text-red-500">&times;</button>
+        </div>
+        <div id="cart-items" class="p-4 flex-1 overflow-y-auto space-y-4"></div>
+        <div class="p-4 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between font-bold text-sm text-gray-700 mb-2">
+                <span>Subtotal:</span>
+                <span id="cart-total" class="text-emerald-800 text-base">₹0</span>
+            </div>
+            <button onclick="placeOrder()" class="btn-primary w-full py-3 mt-2 rounded-lg font-bold text-xs tracking-wide shadow-md">Checkout (Cash on Delivery)</button>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="fixed inset-0 bg-black/80 hidden z-[400] overflow-y-auto p-4 backdrop-blur-sm">
+        <div class="bg-white max-w-4xl mx-auto rounded-xl p-6 mt-10 shadow-2xl">
+            <div class="flex justify-between items-center mb-6 border-b pb-3">
+                <h2 class="text-lg font-bold text-red-800 border-l-4 border-red-700 pl-2">Admin Workspace</h2>
+                <button onclick="toggleAdminModal()" class="text-2xl font-light text-gray-400 hover:text-red-600">&times;</button>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <h3 class="font-bold text-sm mb-3 text-gray-700">Add New Database Product</h3>
+                    <input type="text" id="p-name" placeholder="Product Name" class="w-full border p-2 text-xs mb-2 rounded-md">
+                    <input type="number" id="p-price" placeholder="Price (INR)" class="w-full border p-2 text-xs mb-2 rounded-md">
+                    <input type="text" id="p-img" placeholder="Image URL" class="w-full border p-2 text-xs mb-2 rounded-md">
+                    <textarea id="p-desc" placeholder="Product Details/Specification" class="w-full border p-2 text-xs mb-3 rounded-md h-20"></textarea>
+                    <button onclick="adminAddProduct()" class="bg-emerald-800 hover:bg-emerald-950 text-white w-full py-2 rounded-md font-bold text-xs transition">Save & Publish</button>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <h3 class="font-bold text-sm mb-3 text-gray-700">Incoming Customer Stream Orders</h3>
+                    <div id="admin-orders-list" class="space-y-2 h-64 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-screen" class="fixed inset-0 bg-white hidden z-[500] flex flex-col items-center justify-center text-center p-6">
+        <div class="bg-emerald-100 p-6 rounded-full mb-4">
+            <span class="text-emerald-700 text-6xl font-bold">✓</span>
+        </div>
+        <h2 class="text-2xl font-black text-gray-900">Order Placed Successfully!</h2>
+        <p class="text-xs text-gray-400 mt-1">Thank you for ordering with DiliCart</p>
+        <p id="final-id" class="text-emerald-800 mt-4 font-mono text-sm bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-lg font-bold"></p>
+        <button onclick="location.reload()" class="btn-primary mt-8 px-10 py-3 rounded-lg font-bold text-xs tracking-wider">Continue Shopping</button>
     </div>
 
     <script>
         const API_URL = "https://felicity-dilicart.onrender.com/api";
-        let allProducts = [], cart = [];
+        let cart = [];
+        let allProducts = [];
 
-        // Sample Data with more details
-        const localData = [
-            {_id:'1', name:'Sony WH-1000XM5 Wireless Noise Canceling Headphones', price:29990, image:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600'},
-            {_id:'2', name:'Apple Watch Series 9 [GPS 45mm] Smartwatch', price:44900, image:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600'},
-            {_id:'3', name:'Logitech MX Master 3S Wireless Mouse', price:8995, image:'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600'},
-            {_id:'4', name:'Smart LED Desk Lamp with USB Charging', price:2499, image:'https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&w=600'},
-            {_id:'5', name:'Samsung Galaxy S24 Ultra 5G', price:129999, image:'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600'}
-        ];
-
-        window.onload = async () => {
-            updateUserUI();
-            
-            // Search Listener
-            document.getElementById('main-search').addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase();
-                const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
-                renderProducts(filtered);
-            });
-
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000);
-                const res = await fetch(`${API_URL}/products`, { signal: controller.signal });
-                if (res.ok) {
-                    allProducts = await res.json();
-                } else { throw new Error(); }
-            } catch (e) {
-                allProducts = localData;
-            }
-            renderProducts(allProducts);
+        window.onload = () => { 
+            fetchProducts(); 
+            updateUserUI(); 
         };
 
-        function renderProducts(data) {
-            const grid = document.getElementById('products-grid');
-            if(!data || data.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center flex flex-col items-center">
-                    <p class="text-gray-400 text-lg">No products found matching your search.</p>
-                </div>`;
-                return;
+        async function fetchProducts() {
+            try {
+                const res = await fetch(`${API_URL}/products`);
+                allProducts = await res.json();
+                
+                if(allProducts && allProducts.length > 0) {
+                    document.getElementById('products-grid').innerHTML = allProducts.map(p => `
+                        <div class="bg-white p-4 rounded-xl border border-gray-100 flex flex-col text-black shadow-sm hover:shadow-md transition cursor-pointer relative group" onclick="openDetails('${p._id}')">
+                            <span class="absolute top-2 left-2 bg-red-50 text-red-600 text-[10px] font-extrabold px-1.5 py-0.5 rounded">50% OFF</span>
+                            <div class="h-40 flex items-center justify-center mb-3 bg-gray-50 rounded-lg p-2">
+                                <img src="${p.image}" class="max-h-full object-contain group-hover:scale-105 transition duration-300">
+                            </div>
+                            <h3 class="text-xs font-bold text-gray-800 line-clamp-2 h-8 leading-normal">${p.name}</h3>
+                            <div class="flex items-center gap-1 text-[10px] text-amber-500 my-1">⭐⭐⭐⭐⭐ <span class="text-gray-400 text-[9px]">(1,248)</span></div>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span class="text-base font-black text-slate-900">₹${p.price.toLocaleString()}</span>
+                                <span class="text-[11px] text-gray-400 line-through">₹${(p.price * 2).toLocaleString()}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); addToCart('${p._id}')" class="bg-[#1a3a2a] text-white hover:bg-emerald-900 w-full py-2 text-xs mt-3 font-bold rounded-md transition">Add to Cart</button>
+                        </div>
+                    `).join('');
+                } else {
+                    showPlaceholderProducts();
+                }
+            } catch (e) { 
+                console.error("Server connection lost.", e); 
+                showPlaceholderProducts();
             }
-            grid.innerHTML = data.map(p => `
-                <div class="amz-card p-3 md:p-4 flex flex-col cursor-pointer rounded-lg shadow-sm" onclick="openProduct('${p._id}')">
-                    <div class="h-40 md:h-52 flex items-center justify-center mb-4 bg-white rounded-lg overflow-hidden p-2">
-                        <img src="${p.image}" class="h-full w-full object-contain mix-blend-multiply">
-                    </div>
-                    <h3 class="text-sm font-medium line-clamp-2 mb-2 h-10 leading-tight">${p.name}</h3>
-                    <div class="text-amazon_orange text-xs mb-2">★★★★☆ <span class="text-blue-500 ml-1">4.2k</span></div>
-                    <p class="text-lg md:text-xl font-bold">₹${p.price.toLocaleString('en-IN')}</p>
-                    <p class="text-[10px] md:text-xs text-green-700 font-bold mt-1">✓ FREE Delivery</p>
+        }
+
+        function showPlaceholderProducts() {
+            const dummy = [
+                {_id:"1", name:"boAt Airdopes 131 Wireless Earbuds", price:999, image:"https://m.media-amazon.com/images/I/71o8Q5h63KL._SL1500_.jpg", description:"Premium wireless audio immersion."},
+                {_id:"2", name:"Noise ColorFit Pulse 2 Smart Watch", price:1499, image:"https://m.media-amazon.com/images/I/71o8Q5h63KL._SL1500_.jpg", description:"Stay healthy, connected and smart."},
+            ];
+            allProducts = dummy;
+            document.getElementById('products-grid').innerHTML = dummy.map(p => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100 flex flex-col text-black shadow-sm cursor-pointer" onclick="openDetails('${p._id}')">
+                    <div class="h-40 flex items-center justify-center mb-3 bg-gray-50 rounded-lg"><span class="text-3xl">📦</span></div>
+                    <h3 class="text-xs font-bold text-gray-800 line-clamp-2 h-8">${p.name}</h3>
+                    <p class="text-base font-black text-slate-900 mt-2">₹${p.price.toLocaleString()}</p>
+                    <button onclick="event.stopPropagation(); addToCart('${p._id}')" class="bg-[#1a3a2a] text-white w-full py-2 text-xs mt-3 font-bold rounded-md">Add to Cart</button>
                 </div>
             `).join('');
         }
 
-        function addToCart(p) {
-            cart.push(p);
-            updateCartUI();
+        function openDetails(id) {
+            const p = allProducts.find(item => item._id === id);
+            if (!p) return;
+            document.getElementById('detail-img').src = p.image;
+            document.getElementById('detail-name').innerText = p.name;
+            document.getElementById('detail-price').innerText = `₹${p.price.toLocaleString()}`;
+            document.getElementById('detail-desc').innerText = p.description || "Premium quality product with guaranteed satisfaction.";
             
-            // Polish: Animated feedback
-            const badge = document.getElementById('cart-nav-btn');
-            badge.classList.add('cart-animate');
-            setTimeout(() => badge.classList.remove('cart-animate'), 400);
+            document.getElementById('detail-add-btn').onclick = () => { addToCart(id); closeDetails(); };
+            document.getElementById('detail-buy-btn').onclick = () => { addToCart(id); closeDetails(); toggleCart(); };
+            document.getElementById('detail-modal').classList.remove('hidden');
         }
 
-        // Other functions (updateCartUI, openProduct, etc) should use .toLocaleString('en-IN') for currency
+        function closeDetails() { document.getElementById('detail-modal').classList.add('hidden'); }
+
+        function addToCart(id) {
+            const product = allProducts.find(p => p._id === id);
+            if (product) {
+                cart.push(product);
+                updateCartUI();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
         function updateCartUI() {
             document.getElementById('cart-badge').innerText = cart.length;
-            let total = 0;
-            document.getElementById('cart-items').innerHTML = cart.map((item, i) => {
-                total += item.price;
-                return `<div class="flex gap-4 p-3 bg-gray-50 dark:bg-slate-800 rounded-xl relative group">
-                    <img src="${item.image}" class="w-16 h-16 object-contain bg-white rounded-lg border p-1">
-                    <div class="flex-1">
-                        <p class="text-sm font-bold line-clamp-1 pr-4">${item.name}</p>
-                        <p class="text-red-700 font-bold mt-1">₹${item.price.toLocaleString('en-IN')}</p>
-                        <button onclick="cart.splice(${i},1);updateCartUI()" class="text-xs text-blue-500 mt-2 hover:underline">Remove from cart</button>
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            document.getElementById('cart-total').innerText = `₹${total.toLocaleString()}`;
+            document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
+                <div class="flex gap-3 border-b border-gray-100 pb-2 bg-white p-2 rounded-lg">
+                    <img src="${item.image}" class="w-12 h-12 object-contain bg-gray-50 p-1 rounded">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-xs text-gray-800 truncate">${item.name}</p>
+                        <p class="text-emerald-800 text-xs font-extrabold mt-0.5">₹${item.price.toLocaleString()}</p>
+                        <button onclick="removeFromCart(${idx})" class="text-red-500 text-[10px] font-medium hover:underline mt-1 block">Remove</button>
                     </div>
-                </div>`;
-            }).join('');
-            document.getElementById('cart-total').innerText = `₹${total.toLocaleString('en-IN')}`;
+                </div>
+            `).join('');
         }
 
-        function openProduct(id) {
-            const p = allProducts.find(x => x._id === id);
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-detail').classList.remove('hidden');
-            document.getElementById('det-img').src = p.image;
-            document.getElementById('det-name').innerText = p.name;
-            document.getElementById('det-price').innerText = `₹${p.price.toLocaleString('en-IN')}`;
-            document.getElementById('det-price-side').innerText = `₹${p.price.toLocaleString('en-IN')}`;
-            document.getElementById('add-to-cart-btn').onclick = () => { addToCart(p); toggleCart(); };
-            window.scrollTo(0, 0);
+        function toggleCart() { document.getElementById('cart-drawer').classList.toggle('translate-x-full'); }
+        function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('hidden'); }
+        function toggleAdminModal() { 
+            document.getElementById('admin-modal').classList.toggle('hidden'); 
+            if(!document.getElementById('admin-modal').classList.contains('hidden')) fetchAdminOrders();
         }
 
-        function showHome() {
-            document.getElementById('view-home').classList.remove('hidden');
-            document.getElementById('view-detail').classList.add('hidden');
-        }
+        async function handleAuth() {
+            const btn = document.querySelector("#auth-modal button");
+            const originalText = btn.innerText;
+            
+            const email = document.getElementById('auth-email').value;
+            const name = document.getElementById('auth-name').value;
+            const address = document.getElementById('auth-address').value;
+            const mobile = document.getElementById('auth-mobile').value;
 
-        function toggleCart() {
-            document.getElementById('cart-sidebar').classList.toggle('translate-x-full');
-            document.getElementById('cart-overlay').classList.toggle('hidden');
-        }
+            if(!email || !name || !address || !mobile) {
+                return alert("Please fill out all fields (Name, Email, Address, and Mobile).");
+            }
 
-        function openDeliveryModal() { document.getElementById('delivery-modal').classList.remove('hidden'); }
-        function closeModal() { document.getElementById('delivery-modal').classList.add('hidden'); }
+            try {
+                btn.innerText = "Connecting...";
+                btn.disabled = true;
 
-        function saveDetails() {
-            const details = {
-                name: document.getElementById('ship-name').value,
-                phone: document.getElementById('ship-phone').value,
-                address: document.getElementById('ship-address').value
-            };
-            if (!details.name || !details.phone || !details.address) return alert("Please fill all the details!");
-            localStorage.setItem('dg-user-details', JSON.stringify(details));
-            updateUserUI();
-            closeModal();
+                const res = await fetch(`${API_URL}/user/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, name })
+                });
+
+                const data = await res.json();
+                if(data.success) {
+                    // सिंक किए हुए कस्टम एड्रेस और मोबाइल नंबर को ऑब्जेक्ट में जोड़कर सेव करना
+                    const sessionUser = {
+                        ...data.user,
+                        address: address,
+                        mobile: mobile
+                    };
+                    localStorage.setItem('DILICART-users', JSON.stringify(sessionUser));
+                    updateUserUI();
+                    toggleAuthModal();
+                } else {
+                    alert("Login failed: " + (data.message || "Unknown error"));
+                }
+            } catch (e) {
+                alert("The server is waking up. Please give it a minute and try again.");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         function updateUserUI() {
-            const user = JSON.parse(localStorage.getItem('dg-user-details'));
-            if (user) {
-                document.getElementById('user-nav-name').innerText = user.name.split(' ')[0];
-                document.getElementById('user-nav-full').innerText = user.name;
-                document.getElementById('user-loc-display').innerText = user.address.substring(0, 15) + "...";
-                document.getElementById('logout-btn').classList.remove('hidden');
+            const user = JSON.parse(localStorage.getItem('DILICART-users'));
+            if(user && user.name) {
+                document.getElementById('user-display').innerText = `Hello, ${user.name.split(' ')[0]}`;
             }
         }
 
-        function handleCheckout() {
-            if (cart.length === 0) return alert("Your cart is empty!");
-            const user = JSON.parse(localStorage.getItem('dg-user-details'));
-            if (user) {
-                const msg = new SpeechSynthesisUtterance("Order placed successfully. Thank you " + user.name + " for shopping with Digicart.wish by ANAND SHUKLA");
-                window.speechSynthesis.speak(msg);
-                document.getElementById('success-address').innerText = `Your items will be shipped to: ${user.address}`;
-                document.getElementById('success-screen').classList.remove('hidden');
-            } else {
-                openDeliveryModal();
+        async function placeOrder() {
+            const user = JSON.parse(localStorage.getItem('DILICART-users'));
+            if(!user) return toggleAuthModal();
+            if(cart.length === 0) return alert("Your shopping cart is empty!");
+
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userName: user.name,
+                        userEmail: user.email,
+                        userAddress: user.address,
+                        userMobile: user.mobile,
+                        items: cart,
+                        totalAmount: total
+                    })
+                });
+
+                const data = await res.json();
+                if(data.success) {
+                    document.getElementById('success-screen').classList.remove('hidden');
+                    document.getElementById('final-id').innerText = `ORDER-ID: ${data.orderId || data.order?._id || "SUCCESS"}`;
+                    cart = []; 
+                    updateCartUI();
+                } else {
+                    alert("Order failed: " + data.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Network error or server timeout. Please try again.");
             }
         }
 
-        function logout() {
-            localStorage.removeItem('dg-user-details');
-            location.reload();
+        async function adminAddProduct() {
+            const product = {
+                name: document.getElementById('p-name').value,
+                price: Number(document.getElementById('p-price').value),
+                image: document.getElementById('p-img').value,
+                description: document.getElementById('p-desc').value
+            };
+            const res = await fetch(`${API_URL}/admin/add-product`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(product)
+            });
+            if(res.ok) { alert("Product Added Successfully!"); location.reload(); }
         }
 
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        async function fetchAdminOrders() {
+            const res = await fetch(`${API_URL}/admin/orders`);
+            const orders = await res.json();
+            document.getElementById('admin-orders-list').innerHTML = orders.map(o => `
+                <div class="p-3 border rounded bg-white text-xs mb-2">
+                    <p><b>User:</b> ${o.userName} (${o.userEmail})</p>
+                    <p><b>Address:</b> ${o.userAddress || 'N/A'}</p>
+                    <p><b>Mobile:</b> ${o.userMobile || 'N/A'}</p>
+                    <p><b>Total:</b> ₹${o.totalAmount.toLocaleString()}</p>
+                    <p><b>Status:</b> <span class="text-orange-600 font-bold">${o.status}</span></p>
+                    <p class="text-[10px] text-gray-400 mt-1">Date: ${new Date(o.createdAt).toLocaleDateString()}</p>
+                </div>
+            `).join('');
         }
     </script>
 </body>
