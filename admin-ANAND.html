@@ -3,490 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dilicart Admin Dashboard</title>
+    <title>DiliCart Core | Multi-Role Enterprise Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .hidden { display: none !important; }
-        .sidebar-green { background-color: #0f3322; }
-        .accent-orange { background-color: #f39c12; }
-        .founder-indicator { border-left: 4px solid #f59e0b; }
-        .manager-indicator { border-left: 4px solid #3b82f6; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="text-gray-800 antialiased flex min-h-screen overflow-hidden">
+<body class="bg-[#f8fafc] text-slate-800 antialiased flex min-h-screen">
 
-    <div id="auth-screen" class="fixed inset-0 z-[9999] sidebar-green flex items-center justify-center p-6">
-        <div class="bg-white p-8 md:p-10 rounded-[2rem] w-full max-w-md text-center shadow-2xl">
-            <div class="w-16 h-16 bg-emerald-50 text-[#0f3322] border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl font-bold shadow-sm">
-                <i class="fa-solid fa-shield-halved"></i>
+    <!-- Auth Shield Portal Gateway -->
+    <div id="auth-screen" class="fixed inset-0 z-[9999] bg-[#0f3724] flex items-center justify-center p-6">
+        <div class="bg-white p-8 md:p-10 rounded-[2rem] w-full max-w-md shadow-2xl border border-slate-100">
+            <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-100">
+                <span class="text-2xl">🔐</span>
             </div>
-            <h2 class="text-2xl font-extrabold text-gray-950 mb-1 tracking-tight">Dilicart Identity Verification</h2>
-            <p class="text-gray-400 text-[10px] mb-6 uppercase tracking-widest font-bold">Admin Infrastructure Core</p>
-            <input type="password" id="passkey" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-200 px-4 py-3.5 rounded-xl text-center text-xl tracking-[0.3em] focus:outline-none focus:ring-2 focus:ring-[#0f3322] mb-4 transition-all">
-            <button onclick="login()" class="w-full sidebar-green hover:opacity-90 text-white py-3.5 rounded-xl font-bold transition-all uppercase tracking-wider text-xs shadow-md">Authenticate Terminal</button>
-            <p id="auth-error" class="text-red-600 text-xs mt-3 hidden font-semibold">Verification Failure. Access Denied.</p>
+            <h2 class="text-2xl font-black text-center mb-1 text-slate-900 tracking-tight">DiliCart Terminal</h2>
+            <p class="text-center text-slate-400 text-[10px] mb-8 font-bold uppercase tracking-[0.2em]">Enterprise Authentication</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Passkey Protocol</label>
+                    <input type="password" id="passkey" placeholder="••••••••" 
+                           class="w-full bg-slate-50 border border-slate-200 px-5 py-3.5 rounded-xl text-center text-xl tracking-[0.3em] text-emerald-800 focus:outline-none focus:border-emerald-700 transition-all">
+                </div>
+                
+                <button onclick="loginProcess()" class="w-full bg-[#0f3724] hover:bg-[#164d33] text-white py-4 rounded-xl font-bold transition-all shadow-md uppercase tracking-wider text-xs">
+                    Establish Connection
+                </button>
+            </div>
+            <p id="auth-error" class="text-red-600 text-center text-xs mt-4 hidden font-semibold italic">Invalid Credentials. Access Flagged.</p>
         </div>
     </div>
 
-    <div id="app-workspace" class="w-full flex h-screen overflow-hidden hidden">
+    <!-- Universal Sidebar Container -->
+    <aside id="sidebar" class="w-72 hidden lg:flex flex-col p-6 bg-[#0f3724] text-white sticky top-0 h-screen z-40 shrink-0 shadow-xl justify-between">
+        <div>
+            <div class="mb-10 px-2 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center shadow-md shrink-0">
+                    <span class="text-sm">🛒</span>
+                </div>
+                <h1 class="text-base font-black tracking-tight">DILICART<span class="text-amber-400">.MATRIX</span></h1>
+            </div>
+
+            <!-- Profile Unit -->
+            <div class="mb-8 p-4 bg-[#164d33] rounded-2xl border border-emerald-800/30 flex items-center gap-3">
+                <div id="avatar" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-white text-base">?</div>
+                <div class="truncate">
+                    <p id="user-role" class="text-[8px] text-amber-400 font-bold uppercase tracking-[0.15em]">System Node</p>
+                    <p id="user-name" class="font-bold text-white text-sm truncate">Loading Operational Unit...</p>
+                </div>
+            </div>
+
+            <!-- Contextual Navigation Matrix -->
+            <nav class="space-y-1">
+                <button id="nav-dashboard" onclick="switchTab('dashboard')" class="w-full text-left px-4 py-3 rounded-xl bg-[#164d33] text-white font-semibold flex items-center gap-3 text-xs tracking-wide">📦 Active Operations Hub</button>
+                <button id="nav-owner-panel" onclick="switchTab('owner-panel')" class="w-full text-left px-4 py-3 rounded-xl text-emerald-100/70 hover:bg-[#164d33] hover:text-white transition flex items-center gap-3 text-xs tracking-wide hidden">🔑 Master Control Vault</button>
+                <button onclick="window.location.href='index.html'" class="w-full text-left px-4 py-3 rounded-xl text-emerald-100/70 hover:bg-[#164d33] hover:text-white transition flex items-center gap-3 text-xs tracking-wide">🏠 Live Store View</button>
+            </nav>
+        </div>
+
+        <div>
+            <button onclick="logoutSession()" class="w-full text-left px-4 py-2.5 rounded-xl text-red-300 hover:bg-red-950/30 transition flex items-center gap-3 text-xs font-semibold tracking-wider uppercase">🚪 Terminate Link</button>
+        </div>
+    </aside>
+
+    <!-- Master Workspace Canvas -->
+    <main id="main-content" class="flex-1 p-6 md:p-8 hidden max-w-[1600px] mx-auto w-full overflow-y-auto space-y-8">
         
-        <aside class="w-[260px] sidebar-green text-white flex flex-col justify-between p-5 shrink-0 h-full overflow-y-auto">
+        <!-- Header Status Information Layer -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-6">
             <div>
-                <div class="flex items-center gap-2.5 mb-8 px-2 py-1">
-                    <div class="bg-[#e8f5e9] p-2 rounded-xl text-[#0f3322] font-black shadow-sm flex items-center justify-center">
-                        <i class="fa-solid fa-basket-shopping text-base"></i>
-                    </div>
-                    <span class="text-xl font-black tracking-tight text-white">DILICART</span>
-                </div>
-
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-3 rounded-xl bg-[#1b4332] text-white font-bold text-sm transition-all shadow-sm">
-                        <i class="fa-solid fa-chart-pie opacity-90 text-base"></i> Dashboard
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-3 rounded-xl text-gray-300 hover:bg-[#1b4332]/50 hover:text-white font-medium text-sm transition-all">
-                        <i class="fa-solid fa-box text-base"></i> Products
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-3 rounded-xl text-gray-300 hover:bg-[#1b4332]/50 hover:text-white font-medium text-sm transition-all">
-                        <i class="fa-solid fa-cart-flatbed text-base"></i> Orders
-                    </a>
-                </nav>
+                <span class="text-[9px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-black tracking-widest uppercase mb-1 inline-block" id="system-badge">NODE: INITIALIZING</span>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight" id="workspace-title">Operations Console</h2>
             </div>
-
-            <div class="mt-auto pt-6">
-                <div class="bg-[#1b4332] p-4 rounded-2xl border border-emerald-800/20 text-center relative overflow-hidden">
-                    <div class="text-4xl mb-2">📦</div>
-                    <h4 class="font-bold text-xs text-white mb-1">Grow Your Business</h4>
-                    <p class="text-[10px] text-gray-300/80 mb-3 leading-relaxed">Check insights and grow your business with Dilicart.</p>
-                    <button onclick="window.location.href='index.html'" class="w-full accent-orange text-white text-[11px] font-bold py-2 rounded-xl hover:opacity-90 shadow-sm transition-all">View Active Store</button>
-                </div>
-                <button onclick="logout()" class="w-full flex items-center gap-3 px-3 py-3 mt-4 rounded-xl text-red-300 hover:bg-red-950/30 transition-all text-left font-bold text-xs uppercase tracking-wider">
-                    <i class="fa-solid fa-right-from-bracket"></i> SHUTDOWN
-                </button>
-            </div>
-        </aside>
-
-        <main class="flex-1 flex flex-col min-w-0 bg-[#f8f9fa] h-full overflow-y-auto">
             
-            <header class="bg-white border-b border-gray-100 px-8 py-4 flex justify-between items-center shrink-0">
-                <div>
-                    <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Dashboard</h1>
-                    <p class="text-xs text-gray-400 font-medium">Welcome back, Admin!</p>
+            <!-- Global Stats Counters -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto text-xs">
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm min-w-[120px]">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Gross Pipeline</p>
+                    <p id="stat-gross" class="text-base font-extrabold text-slate-900 mt-0.5">₹0</p>
                 </div>
-                
-                <div class="flex items-center gap-5">
-                    <div class="relative w-64 hidden sm:block">
-                        <input type="text" placeholder="Search anything..." class="w-full bg-gray-50 pl-4 pr-10 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#0f3322] text-xs font-medium text-gray-700">
-                        <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-gray-400 text-xs"></i>
-                    </div>
-                    <div class="flex items-center gap-2.5 border-l border-gray-100 pl-4">
-                        <div id="user-avatar" class="w-8 h-8 rounded-xl flex items-center justify-center font-black text-white text-xs shadow-sm bg-amber-500">?</div>
-                        <div class="hidden md:block">
-                            <p id="user-name" class="font-bold text-xs text-gray-900 leading-tight">User</p>
-                            <p id="user-role" class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">ROLE</p>
-                        </div>
-                    </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm min-w-[120px]">
+                    <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">Paid Clearance</p>
+                    <p id="stat-paid" class="text-base font-extrabold text-emerald-700 mt-0.5">₹0</p>
                 </div>
-            </header>
-
-            <div class="p-6 md:p-8 space-y-6 max-w-[1600px] w-full mx-auto">
-                
-                <section id="founder-stats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 hidden">
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-base font-bold border border-emerald-100 shadow-inner">₹</div>
-                        <div>
-                            <span class="text-[11px] font-bold text-gray-400 block mb-0.5">Total Revenue</span>
-                            <h3 id="rev-val" class="text-lg font-black text-gray-900 tracking-tight">₹0</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm border border-blue-100 shadow-inner"><i class="fa-solid fa-box"></i></div>
-                        <div>
-                            <span class="text-[11px] font-bold text-gray-400 block mb-0.5">Live Inventory</span>
-                            <h3 id="inv-val" class="text-lg font-black text-gray-900 tracking-tight">0</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-sm border border-orange-100 shadow-inner"><i class="fa-solid fa-boxes-stacked"></i></div>
-                        <div>
-                            <span class="text-[11px] font-bold text-gray-400 block mb-0.5">Active Signals</span>
-                            <h3 id="order-count-badge" class="text-lg font-black text-gray-900 tracking-tight">0 Active</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm border border-purple-100 shadow-inner"><i class="fa-solid fa-satellite-dish"></i></div>
-                        <div>
-                            <span class="text-[11px] font-bold text-gray-400 block mb-0.5">System Link</span>
-                            <h3 class="text-xs font-black text-emerald-600 tracking-tight uppercase">Operational</h3>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 flex flex-col justify-between">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-extrabold text-gray-900 text-sm tracking-tight">Sales Overview</h3>
-                            <span class="text-[10px] bg-gray-50 font-bold px-2.5 py-1 rounded-lg border border-gray-200">Real-time Stream</span>
-                        </div>
-                        <div class="h-48 w-full"><canvas id="salesOverviewChart"></canvas></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-extrabold text-gray-900 text-sm tracking-tight">Products Overview Status</h3>
-                            <span class="text-[10px] bg-emerald-50 text-emerald-800 font-bold px-2.5 py-1 rounded-lg">Density Matrix</span>
-                        </div>
-                        <div class="h-48 w-full relative flex items-center justify-center">
-                            <canvas id="productPieChart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="performance-section" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hidden">
-                    <h3 class="text-sm font-extrabold tracking-tight text-gray-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                        <span class="w-1.5 h-3.5 bg-amber-500 inline-block rounded-sm"></span> Agent Performance Scoreboard
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="text-gray-400 border-b border-gray-100">
-                                    <th class="pb-3 font-bold uppercase tracking-wider">Agent</th>
-                                    <th class="pb-3 font-bold uppercase tracking-wider">Role</th>
-                                    <th class="pb-3 font-bold uppercase tracking-wider">Uploads Added</th>
-                                    <th class="pb-3 font-bold uppercase tracking-wider">Shipped Orders</th>
-                                </tr>
-                            </thead>
-                            <tbody id="performance-rows" class="font-semibold text-gray-800 divide-y divide-gray-50"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="security-logs-section" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-sm font-extrabold tracking-tight text-gray-900 flex items-center gap-2 uppercase tracking-wider">
-                            <span class="w-1.5 h-3.5 bg-red-600 inline-block rounded-sm"></span> Terminal Login History & Audit Trail
-                        </h3>
-                        <button onclick="clearLogs()" class="text-[10px] text-red-500 hover:underline font-bold uppercase tracking-wider">Clear Logs</button>
-                    </div>
-                    <div class="overflow-x-auto max-h-60 overflow-y-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="text-gray-400 border-b border-gray-100">
-                                    <th class="pb-2 font-bold uppercase">Timestamp</th>
-                                    <th class="pb-2 font-bold uppercase">Administrator</th>
-                                    <th class="pb-2 font-bold uppercase">Role Metric</th>
-                                    <th class="pb-2 font-bold uppercase">Status State</th>
-                                </tr>
-                            </thead>
-                            <tbody id="security-log-rows" class="font-medium text-gray-700 divide-y divide-gray-50">
-                                </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2">
-                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col min-h-[480px]">
-                            <h3 class="text-sm font-extrabold tracking-tight flex items-center gap-2 text-gray-900 mb-6 border-b border-gray-50 pb-4">
-                                <span class="w-1.5 h-3.5 sidebar-green inline-block rounded-sm"></span> Active Transmissions Feed
-                            </h3>
-                            <div id="order-feed" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-1">
-                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm sticky top-6">
-                            <h3 class="text-sm font-extrabold mb-5 flex items-center gap-2 tracking-tight text-gray-900 uppercase">
-                                <span class="w-1.5 h-3.5 accent-orange inline-block rounded-sm"></span> Register Market Asset
-                            </h3>
-                            <div class="space-y-3.5">
-                                <input type="text" id="p-name" placeholder="Item Title" class="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl focus:border-[#0f3322] focus:ring-1 focus:ring-[#0f3322] outline-none text-xs font-medium text-gray-900 transition-all">
-                                <input type="number" id="p-price" placeholder="Price (₹)" class="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl focus:border-[#0f3322] focus:ring-1 focus:ring-[#0f3322] outline-none text-xs font-medium text-gray-900 transition-all">
-                                <input type="text" id="p-img" placeholder="Image Resource URL" class="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl focus:border-[#0f3322] focus:ring-1 focus:ring-[#0f3322] outline-none text-xs font-medium text-gray-900 transition-all">
-                                <textarea id="p-desc" placeholder="Specifications configuration copy details..." class="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl focus:border-[#0f3322] focus:ring-1 focus:ring-[#0f3322] outline-none text-xs font-medium h-24 text-gray-900 resize-none transition-all"></textarea>
-                                <button onclick="postProduct()" class="w-full sidebar-green hover:opacity-95 text-white py-3.5 rounded-xl font-bold transition-all text-xs uppercase tracking-wider shadow-sm">Push To Database</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm min-w-[120px]">
+                    <p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider">Pending COD</p>
+                    <p id="stat-cod" class="text-base font-extrabold text-amber-600 mt-0.5">₹0</p>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm min-w-[120px]">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Catalog Units</p>
+                    <p id="stat-items" class="text-base font-extrabold text-slate-900 mt-0.5">0</p>
+                </div>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <!-- TAB 1: OPERATIONS HUBS (VISIBLE TO BOTH) -->
+        <div id="tab-dashboard" class="space-y-8">
+            <!-- Section: Logistics Mapping Distribution -->
+            <section class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-black flex items-center gap-2 uppercase tracking-wider text-slate-400">
+                        <span class="w-1 h-3.5 bg-amber-500 rounded-sm"></span> Regional Geofence Area Allocations
+                    </h3>
+                </div>
+                <div id="area-logistics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Area Nodes render dynamically here -->
+                </div>
+            </section>
+
+            <!-- Section: Shop Outpost Registries Clusters -->
+            <section class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+                <h3 class="text-xs font-black mb-4 flex items-center gap-2 uppercase tracking-wider text-slate-400">
+                    <span class="w-1 h-3.5 bg-blue-500 rounded-sm"></span> Operational Shop Registries Index
+                </h3>
+                <div id="shop-outpost-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Shop list instances generate here -->
+                </div>
+            </section>
+
+            <!-- Product Entry Panel & Real-time Transactions Stream -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Data Insertion Console (Left column) -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5">
+                        <h3 class="text-xs font-black flex items-center gap-2 uppercase tracking-wider text-slate-400 mb-2">
+                            <span class="w-1 h-3.5 bg-emerald-700 rounded-sm"></span> Push Catalog Item
+                        </h3>
+                        <input type="text" id="p-name" placeholder="Item System Identifier" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl outline-none text-xs text-slate-900">
+                        <input type="number" id="p-price" placeholder="Base Rate (₹)" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl outline-none text-xs text-slate-900">
+                        <input type="text" id="p-img" placeholder="Visual CDN Resource URL" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl outline-none text-xs text-slate-900">
+                        <textarea id="p-desc" placeholder="Component parameters description summary..." class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl outline-none text-xs h-20 resize-none"></textarea>
+                        <button onclick="commitNewAsset()" class="w-full bg-[#0f3724] hover:bg-[#164d33] text-white py-3 rounded-xl font-bold transition text-xs uppercase tracking-wider">Deploy Asset</button>
+                    </div>
+                </div>
+
+                <!-- Live Stream Pipeline (Right Column) -->
+                <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col min-h-[400px]">
+                    <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
+                        <h3 class="text-xs font-black flex items-center gap-2 uppercase tracking-wider text-slate-400">
+                            <span class="w-1 h-3.5 bg-emerald-600 rounded-sm"></span> Incoming Live Order Feed
+                        </h3>
+                        <span id="order-badge" class="bg-slate-100 text-slate-700 text-[9px] font-black px-2 py-0.5 rounded">0 REQS</span>
+                    </div>
+                    <div id="order-transmission-feed" class="space-y-3">
+                        <!-- Dynamic transaction nodes mapping -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: EXCLUSIVE MASTER CONTROL OWNER VAULT (HIDDEN FROM STANDARD WORKERS) -->
+        <div id="tab-owner-panel" class="space-y-6 hidden">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="mb-6">
+                    <h3 class="text-sm font-black text-slate-900 tracking-tight">System Infrastructure Operator Directory</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Manage operator tokens, view active clearkeys, and deploy configuration overrides.</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                                <th class="pb-3 font-semibold">Security Identifier Node</th>
+                                <th class="pb-3 font-semibold">User Identity Label</th>
+                                <th class="pb-3 font-semibold">Privilege Clearance</th>
+                                <th class="pb-3 font-semibold text-center">Assigned Access Key Token</th>
+                                <th class="pb-3 font-semibold text-right">Actions Matrix</th>
+                            </tr>
+                        </thead>
+                        <tbody id="operator-matrix-table" class="divide-y divide-slate-100 font-medium text-slate-700">
+                            <!-- Populated runtime execution elements -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        const API = "https://felicity-dilicart.onrender.com/api";
-        const USERS = {
-            "rudra2212": { name: "Rudra Garg", role: "FOUNDER", theme: "founder-indicator" },
-            "anupam2212": { name: "Anupam Pandey", role: "MANAGER", theme: "manager-indicator" },
-            "anand@2212": { name: "Anand Shukla", role: "FOUNDER", theme: "founder-indicator" },
-            "manager1": { name: "Mohit Kumar", role: "MANAGER", theme: "manager-indicator" }
+        const API_URL = "https://felicity-dilicart.onrender.com/api";
+
+        // Decentralized Security Token Database Registry
+        let LOGISTICS_REGISTRY = {
+            "anand2212": { name: "Anand Shukla", role: "Owner", clearance: "SUPERADMIN_ROOT", color: "#0f3724" },
+            "anupam2212": { name: "Anupam Pandey", role: "Worker / Manager", clearance: "FIELD_OPERATOR_V1", color: "#8b5cf6" },
+            "worker2026": { name: "Anand Singh", role: "Worker / Supervisor", clearance: "FIELD_OPERATOR_V2", color: "#0284c7" }
         };
 
-        let salesOverviewChart, productPieChart;
+        let ActiveSessionNode = null;
 
-        // --- AUTH & TRACKING ENGINE LOGIC ---
-        function login() {
-            const key = document.getElementById('passkey').value;
-            const user = USERS[key];
-            if (user) {
-                sessionStorage.setItem('dili_session', JSON.stringify(user));
-                
-                // Save login info inside local security tracking histories array
-                logAdminSession(user.name, user.role, "SUCCESS");
-                
-                initUI(user);
+        function loginProcess() {
+            const pass = document.getElementById('passkey').value.trim();
+            if (LOGISTICS_REGISTRY[pass]) {
+                ActiveSessionNode = { ...LOGISTICS_REGISTRY[pass], currentKey: pass };
+                sessionStorage.setItem('dilicart_secure_token', JSON.stringify(ActiveSessionNode));
+                bootstrapTerminalSystem();
             } else {
-                // Track failed attempts for security checkup routines
-                logAdminSession("UNKNOWN (Key: " + key.slice(0,4) + "..)", "REJECTED", "FAILED");
-                const error = document.getElementById('auth-error');
-                error.classList.remove('hidden');
-                setTimeout(() => error.classList.add('hidden'), 2000);
+                const err = document.getElementById('auth-error');
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 2000);
             }
         }
 
-        function logAdminSession(name, role, status) {
-            let logs = JSON.parse(localStorage.getItem('dilicart_auth_logs')) || [];
-            const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-            
-            logs.unshift({ timestamp, name, role, status }); // Add newest log on top
-            localStorage.setItem('dilicart_auth_logs', JSON.stringify(logs));
-        }
-
-        function initUI(user) {
+        function bootstrapTerminalSystem() {
             document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-workspace').classList.remove('hidden');
-            
-            document.getElementById('user-name').innerText = user.name;
-            document.getElementById('user-role').innerText = user.role;
-            
-            const avatar = document.getElementById('user-avatar');
-            avatar.innerText = user.name[0].toUpperCase();
-            avatar.style.background = user.role === 'FOUNDER' ? '#f59e0b' : '#3b82f6';
+            document.getElementById('sidebar').classList.remove('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
 
-            // Founder Level Special Access Rights Mapping
-            if (user.role === 'FOUNDER') {
-                document.getElementById('founder-stats').classList.remove('hidden');
-                document.getElementById('performance-section').classList.remove('hidden');
-                document.getElementById('security-logs-section').classList.remove('hidden');
-                renderSecurityLogs();
+            document.getElementById('user-name').innerText = ActiveSessionNode.name;
+            document.getElementById('user-role').innerText = ActiveSessionNode.role;
+            
+            const av = document.getElementById('avatar');
+            av.innerText = ActiveSessionNode.name.charAt(0);
+            av.style.backgroundColor = ActiveSessionNode.color;
+
+            // Conditional Access Logic for Master Owner Tab Trigger
+            const ownerNavBtn = document.getElementById('nav-owner-panel');
+            if (ActiveSessionNode.clearance === "SUPERADMIN_ROOT") {
+                ownerNavBtn.classList.remove('hidden');
+                document.getElementById('system-badge').className = "text-[9px] bg-red-100 text-red-800 px-2 py-0.5 rounded font-black tracking-widest uppercase mb-1 inline-block";
+                document.getElementById('system-badge').innerText = "PRIVILEGE STATUS: ROOT_OWNER";
             } else {
-                document.getElementById('founder-stats').classList.add('hidden');
-                document.getElementById('performance-section').classList.add('hidden');
-                document.getElementById('security-logs-section').classList.add('hidden');
+                ownerNavBtn.classList.add('hidden');
+                document.getElementById('system-badge').className = "text-[9px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-black tracking-widest uppercase mb-1 inline-block";
+                document.getElementById('system-badge').innerText = "PRIVILEGE STATUS: OPERATOR";
             }
 
-            initCharts();
-            loadData(user);
-            setInterval(() => loadData(user), 15000); 
+            switchTab('dashboard');
+            syncMetricsPipeline();
+            setInterval(syncMetricsPipeline, 10000);
         }
 
-        function renderSecurityLogs() {
-            const rows = document.getElementById('security-log-rows');
-            let logs = JSON.parse(localStorage.getItem('dilicart_auth_logs')) || [];
+        function switchTab(targetTab) {
+            const tabs = ['dashboard', 'owner-panel'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (el) el.classList.add('hidden');
+                
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (navBtn) {
+                    navBtn.className = "w-full text-left px-4 py-3 rounded-xl text-emerald-100/70 hover:bg-[#164d33] hover:text-white transition flex items-center gap-3 text-xs tracking-wide";
+                }
+            });
+
+            document.getElementById(`tab-${targetTab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${targetTab}`);
+            if (activeBtn) {
+                activeBtn.className = "w-full text-left px-4 py-3 rounded-xl bg-[#164d33] text-white font-bold flex items-center gap-3 text-xs tracking-wide shadow-inner border-l-4 border-amber-400";
+            }
+
+            document.getElementById('workspace-title').innerText = targetTab === 'dashboard' ? "Operations Pipeline Hub" : "Master Security Control Vault";
             
-            if(logs.length === 0) {
-                rows.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-400 italic">No terminal session records found.</td></tr>`;
+            if(targetTab === 'owner-panel') {
+                compileOperatorMatrix();
+            }
+        }
+
+        async function syncMetricsPipeline() {
+            try {
+                // Fetch catalog counter logic
+                const pRes = await fetch(`${API_URL}/products`);
+                const products = await pRes.json();
+                document.getElementById('stat-items').innerText = products.length;
+
+                // Sync orders transmission array elements
+                let orders = [];
+                try {
+                    const oRes = await fetch(`${API_URL}/admin/orders`);
+                    orders = await oRes.json();
+                } catch(err) {
+                    orders = JSON.parse(localStorage.getItem('DILICART-orders-history')) || [];
+                }
+
+                let gross = 0, paid = 0, cod = 0;
+                let areaAggregation = {};
+                let shopIndexAggregation = {};
+
+                orders.forEach(o => {
+                    const amt = Number(o.amount || o.totalAmount || 0);
+                    gross += amt;
+
+                    // Compute billing states indices parameters mapping
+                    const payStatus = (o.paymentStatus || o.status || '').toLowerCase();
+                    if(payStatus.includes('paid') || payStatus.includes('success') || payStatus.includes('confirmed')) {
+                        paid += amt;
+                    } else {
+                        cod += amt;
+                    }
+
+                    // Process Area Segmentation Arrays Mapping
+                    let rawAddr = o.userAddress || o.address || 'Civil Lines, Prayagraj';
+                    let area = extractCleanArea(rawAddr);
+                    if(!areaAggregation[area]) areaAggregation[area] = { tracking: 0, balance: 0 };
+                    areaAggregation[area].tracking += 1;
+                    areaAggregation[area].balance += amt;
+
+                    // Extract Mock Shop references dynamically inside payload logs 
+                    let storeNode = o.storeIdentifier || o.shopName || 'Central DiliCart Node';
+                    if(!shopIndexAggregation[storeNode]) shopIndexAggregation[storeNode] = { loops: 0, layoutVolume: 0 };
+                    shopIndexAggregation[storeNode].loops += 1;
+                    shopIndexAggregation[storeNode].layoutVolume += amt;
+                });
+
+                document.getElementById('stat-gross').innerText = `₹${gross.toLocaleString()}`;
+                document.getElementById('stat-paid').innerText = `₹${paid.toLocaleString()}`;
+                document.getElementById('stat-cod').innerText = `₹${cod.toLocaleString()}`;
+                document.getElementById('order-badge').innerText = `${orders.length} ACTIVE DISPATCHES`;
+
+                renderAreaCards(areaAggregation);
+                renderShopOutposts(shopIndexAggregation);
+                renderOrderStreamFeed(orders);
+            } catch (ex) { console.error("Pipeline Sync Interrupt Trace:", ex); }
+        }
+
+        function extractCleanArea(str) {
+            if(!str) return "Main Grid Link";
+            const items = str.split(',');
+            if(items.length > 1) return items[items.length - 2].trim().substring(0, 20);
+            return items[0].trim().substring(0, 20);
+        }
+
+        function renderAreaCards(areaData) {
+            const grid = document.getElementById('area-logistics-grid');
+            const keys = Object.keys(areaData);
+            if(keys.length === 0) {
+                grid.innerHTML = `<p class="text-[11px] text-slate-400 font-medium py-2">No dynamic zone nodes tracked in active storage loops.</p>`;
                 return;
             }
-
-            rows.innerHTML = logs.map(l => `
-                <tr class="hover:bg-gray-50/50 transition-all">
-                    <td class="py-2.5 text-gray-500 font-mono text-[11px]">${l.timestamp}</td>
-                    <td class="py-2.5 text-gray-900 font-bold">${l.name}</td>
-                    <td class="py-2.5"><span class="text-[10px] font-bold px-2 py-0.5 rounded ${l.role === 'FOUNDER' ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700'}">${l.role}</span></td>
-                    <td class="py-2.5 font-bold ${l.status === 'SUCCESS' ? 'text-green-600' : 'text-red-600'}">${l.status}</td>
-                </tr>
+            grid.innerHTML = keys.map(k => `
+                <div class="bg-slate-50 border border-slate-200/60 p-4 rounded-xl flex flex-col justify-between shadow-sm">
+                    <div>
+                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Geofence Node</span>
+                        <h4 class="text-xs font-bold text-slate-900 truncate mt-0.5">📍 ${k}</h4>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center text-[11px] pt-2 border-t border-slate-100">
+                        <span class="text-slate-400 font-medium">${areaData[k].tracking} Drops</span>
+                        <span class="font-extrabold text-emerald-800">₹${areaData[k].balance.toLocaleString()}</span>
+                    </div>
+                </div>
             `).join('');
         }
 
-        function clearLogs() {
-            if(confirm("Purge terminal session security history trail permanently?")) {
-                localStorage.removeItem('dilicart_auth_logs');
-                renderSecurityLogs();
-            }
-        }
-
-        // --- CHART SYSTEM FUNCTIONS ---
-        function initCharts() {
-            salesOverviewChart = new Chart(document.getElementById('salesOverviewChart'), {
-                type: 'line',
-                data: {
-                    labels: ['May 20', 'May 21', 'May 22', 'May 23', 'May 24', 'May 25', 'May 26'],
-                    datasets: [
-                        { label: 'Profit', data: [25, 40, 35, 30, 58, 48, 55], borderColor: '#2e7d32', borderWidth: 2.5, tension: 0.38, fill: false, pointRadius: 2 },
-                        { label: 'Loss', data: [10, 15, 12, 8, 14, 11, 13], borderColor: '#d32f2f', borderWidth: 1.5, tension: 0.38, fill: false, pointRadius: 0 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f3f5' } } }
-                }
-            });
-
-            productPieChart = new Chart(document.getElementById('productPieChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Active Products', 'Out of Stock', 'Low Stock'],
-                    datasets: [{
-                        data: [85, 5, 10],
-                        backgroundColor: ['#2e7d32', '#d32f2f', '#f39c12'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } } } },
-                    cutout: '72%'
-                }
-            });
-        }
-
-        // --- BACKEND STREAM REPLICATOR SYNCHRONIZER ---
-        async function loadData(user) {
-            try {
-                const [pRes, oRes] = await Promise.all([
-                    fetch(`${API}/products`),
-                    fetch(`${API}/admin/orders`)
-                ]);
-                const products = await pRes.json();
-                const orders = await oRes.json();
-
-                if (user.role === 'FOUNDER') {
-                    document.getElementById('inv-val').innerText = products.length;
-                    const rev = orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
-                    document.getElementById('rev-val').innerText = `₹${rev.toLocaleString()}`;
-                    document.getElementById('order-count-badge').innerText = `${orders.length} Active`;
-                    
-                    renderPerformance(products, orders);
-                    renderSecurityLogs();
-                }
-
-                if (salesOverviewChart) {
-                    salesOverviewChart.data.datasets[0].data.shift();
-                    salesOverviewChart.data.datasets[0].data.push(Math.floor(Math.random() * 20) + 40);
-                    salesOverviewChart.update();
-                }
-
-                renderOrders(orders, user);
-            } catch (err) {
-                console.error("Critical structural sync failure event detected:", err);
-            }
-        }
-
-        function renderPerformance(products, orders) {
-            const rows = document.getElementById('performance-rows');
-            const staff = ["Anand Shukla", "Anupam Pandey", "Rudra Garg", "Mohit Kumar"];
-            
-            rows.innerHTML = staff.map(name => {
-                const uploads = products.filter(p => p.addedBy === name).length;
-                const shipped = orders.filter(o => o.deliveredBy === name).length;
-                
-                const userKey = Object.keys(USERS).find(k => USERS[k].name === name);
-                const isManager = userKey && USERS[userKey].role === "MANAGER";
-                
-                return `
-                    <tr class="hover:bg-gray-50/80 transition-all">
-                        <td class="py-3.5 border-b border-gray-100 text-gray-900 font-bold">${name}</td>
-                        <td class="py-3.5 border-b border-gray-100">
-                            <span class="text-[10px] px-2.5 py-0.5 rounded-md font-bold ${isManager ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-amber-50 text-amber-700 border border-amber-100'}">
-                                ${isManager ? 'MANAGER' : 'FOUNDER'}
-                            </span>
-                        </td>
-                        <td class="py-3.5 border-b border-gray-100 text-gray-600">${uploads} items</td>
-                        <td class="py-3.5 border-b border-gray-100 text-emerald-700 font-bold">${shipped} dispatched</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderOrders(orders, user) {
-            const feed = document.getElementById('order-feed');
-            if (!orders || orders.length === 0) {
-                feed.innerHTML = `
-                    <div class="col-span-full text-center py-20 opacity-50">
-                        <span class="text-3xl block mb-2">📡</span>
-                        <p class="text-xs font-bold text-gray-400">Awaiting operational external checkout data lines...</p>
+        function renderShopOutposts(shopData) {
+            const grid = document.getElementById('shop-outpost-grid');
+            const stores = Object.keys(shopData);
+            if(stores.length === 0) {
+                grid.innerHTML = `
+                    <div class="bg-slate-50 border border-dashed border-slate-200 p-4 rounded-xl text-center col-span-full">
+                        <p class="text-[11px] text-slate-400 font-medium">No registered commercial shop outposts active.</p>
                     </div>`;
                 return;
             }
-
-            feed.innerHTML = orders.slice().reverse().map(o => `
-                <div class="bg-gray-50/50 border border-gray-200/90 p-5 rounded-2xl hover:border-gray-300 transition-all shadow-sm flex flex-col justify-between ${user.role === 'FOUNDER' ? 'founder-indicator' : 'manager-indicator'}">
-                    <div>
-                        <div class="flex justify-between items-start gap-2 mb-2">
-                            <h4 class="font-extrabold text-sm text-gray-900 tracking-tight truncate">${o.userName || 'Anonymous Client'}</h4>
-                            <p class="text-emerald-700 font-black text-sm shrink-0">₹${(o.totalAmount || 0).toLocaleString()}</p>
+            grid.innerHTML = stores.map(s => `
+                <div class="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">🏬</div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900">${s}</h4>
+                            <p class="text-[10px] text-slate-400 font-medium">${shopData[s].loops} Orders processed</p>
                         </div>
-                        <p class="text-[11px] text-gray-400 font-medium mb-4 line-clamp-2">${o.address || 'No destination address route provided.'}</p>
                     </div>
-                    <button onclick="deliverOrder('${o._id}')" class="w-full py-2.5 bg-white border border-gray-200 text-gray-700 hover:bg-[#0f3322] hover:text-white font-bold rounded-xl text-[10px] uppercase tracking-wider transition-all shadow-sm">
-                        Complete as ${user.name}
-                    </button>
+                    <span class="text-xs font-extrabold text-slate-900">₹${shopData[s].layoutVolume.toLocaleString()}</span>
                 </div>
             `).join('');
         }
 
-        // --- ASYNC MUTATION ENGINES LAYERS ---
-        async function postProduct() {
-            const user = JSON.parse(sessionStorage.getItem('dili_session'));
-            const p = {
-                name: document.getElementById('p-name').value,
-                price: Number(document.getElementById('p-price').value),
+        function renderOrderStreamFeed(orders) {
+            const container = document.getElementById('order-transmission-feed');
+            if(orders.length === 0) {
+                container.innerHTML = `<p class="text-xs font-medium text-slate-400 text-center py-10">Awaiting runtime distribution triggers...</p>`;
+                return;
+            }
+            container.innerHTML = orders.map(o => {
+                const isPaid = (o.paymentStatus || o.status || '').toLowerCase().includes('paid');
+                const rid = o.id || o._id || 'GEN-ERR';
+                return `
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-0.5">
+                        <p class="text-[9px] font-mono font-bold tracking-wider ${isPaid?'text-emerald-700':'text-amber-600'}">ID: ${rid.toUpperCase()}</p>
+                        <h4 class="text-xs font-bold text-slate-900">${o.userName || 'DiliCart Guest Endpoint'}</h4>
+                        <p class="text-[10px] text-slate-400">Route: ${o.userAddress || o.address || 'Unspecified Logistics Point'}</p>
+                    </div>
+                    <div class="flex items-center gap-4 justify-between md:justify-end">
+                        <div class="text-right">
+                            <p class="text-xs font-black text-slate-900">₹${Number(o.amount||o.totalAmount||0).toLocaleString()}</p>
+                            <span class="text-[8px] font-bold px-1.5 py-0.2 rounded ${isPaid?'bg-emerald-100 text-emerald-800':'bg-amber-100 text-amber-800'}">${isPaid?'PAID':'COD'}</span>
+                        </div>
+                        <button onclick="purgeTrackNode('${rid}')" class="p-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg transition text-[10px]">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function purgeTrackNode(id) {
+            if(!confirm("Clear transactional tracing reference?")) return;
+            let localHistory = JSON.parse(localStorage.getItem('DILICART-orders-history')) || [];
+            localStorage.setItem('DILICART-orders-history', JSON.stringify(localHistory.filter(x => (x.id!==id && x._id!==id))));
+            try { await fetch(`${API_URL}/admin/orders/${id}`, { method: 'DELETE' }); } catch(e){}
+            syncMetricsPipeline();
+        }
+
+        async function commitNewAsset() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            if(!name || !price) return alert("System error: Key variables must match schema validation requirements.");
+            
+            const payload = {
+                name, price: Number(price),
                 image: document.getElementById('p-img').value || 'https://via.placeholder.com/150',
-                description: document.getElementById('p-desc').value,
-                addedBy: user.name 
+                description: document.getElementById('p-desc').value || 'Asset item module injected via core terminal interface.'
             };
+
+            try {
+                await fetch(`${API_URL}/admin/add-product`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                alert("Catalog asset tracking updated successfully!");
+            } catch(e) { alert("Server pipeline offline. Data retained inside session logs cache."); }
             
-            if (!p.name || !p.price) return alert("Validation Check Failed: Parameters required.");
-            
-            const res = await fetch(`${API}/admin/add-product`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(p)
-            });
-            
-            if (res.ok) {
-                showToast(`Asset vector securely deployed by ${user.name}! 🚀`);
-                document.getElementById('p-name').value = '';
-                document.getElementById('p-price').value = '';
-                document.getElementById('p-img').value = '';
-                document.getElementById('p-desc').value = '';
-                loadData(user);
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-img').value = '';
+            document.getElementById('p-desc').value = '';
+            syncMetricsPipeline();
+        }
+
+        // --- OWNER CORE ENVELOPE: LOGISTICS & TOKENS MODIFICATION CONFIGS ---
+        function compileOperatorMatrix() {
+            const tableBody = document.getElementById('operator-matrix-table');
+            if(!tableBody) return;
+
+            tableBody.innerHTML = Object.keys(LOGISTICS_REGISTRY).map(key => {
+                const operator = LOGISTICS_REGISTRY[key];
+                return `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="py-4 font-mono text-[10px] text-slate-500 tracking-wider font-bold"># ${Math.random().toString(16).substring(2, 8).toUpperCase()}</td>
+                    <td class="py-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${operator.color}"></span>
+                            <span class="font-bold text-slate-900">${operator.name}</span>
+                        </div>
+                    </td>
+                    <td class="py-4">
+                        <span class="px-2 py-0.5 text-[9px] font-bold rounded-md bg-slate-100 text-slate-700 border border-slate-200">${operator.role}</span>
+                    </td>
+                    <td class="py-4 font-mono font-bold text-center tracking-widest text-emerald-800 bg-slate-50/50">${key}</td>
+                    <td class="py-4 text-right">
+                        <button onclick="rekeyOperatorToken('${key}')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[10px] font-bold tracking-wider uppercase transition shadow-sm">
+                            Modify Token / Passkey
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function rekeyOperatorToken(oldKey) {
+            if(ActiveSessionNode.clearance !== "SUPERADMIN_ROOT") {
+                return alert("Authorization Error: Security Token write vectors locked out.");
             }
-        }
-
-        async function deliverOrder(id) {
-            const user = JSON.parse(sessionStorage.getItem('dili_session'));
-            if (!confirm(`Mark this transmission as dispatched and handled by you (${user.name})?`)) return;
             
-            const res = await fetch(`${API}/admin/orders/${id}`, { method: 'DELETE' });
-            if (res.ok) {
-                showToast(`Order deployment confirmed by ${user.name}. 📦`);
-                loadData(user);
+            const targetOperator = LOGISTICS_REGISTRY[oldKey];
+            const newKey = prompt(`Enter new secret passkey token string for [ ${targetOperator.name} ] :`, oldKey);
+            
+            if(!newKey || newKey.trim() === "") return;
+            const cleanKey = newKey.trim();
+
+            if (LOGISTICS_REGISTRY[cleanKey] && cleanKey !== oldKey) {
+                return alert("Hash Collision: Passkey sequence already mapped to another entity node.");
             }
+
+            // Remap storage blocks
+            delete LOGISTICS_REGISTRY[oldKey];
+            LOGISTICS_REGISTRY[cleanKey] = targetOperator;
+            
+            alert(`Security configurations updated. Passkey set token successfully transformed for ${targetOperator.name}.`);
+            compileOperatorMatrix();
         }
 
-        function showToast(msg) {
-            const t = document.createElement('div');
-            t.className = "fixed bottom-6 right-6 sidebar-green text-white px-5 py-3 rounded-xl font-bold shadow-2xl z-[9999] text-xs uppercase tracking-wide border border-emerald-800/20";
-            t.innerText = msg;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 3500);
-        }
-
-        function logout() { 
-            sessionStorage.clear(); 
-            location.reload(); 
-        }
+        function logoutSession() { sessionStorage.clear(); location.reload(); }
 
         window.onload = () => {
-            const session = sessionStorage.getItem('dili_session');
-            if (session) initUI(JSON.parse(session));
+            const cachedToken = sessionStorage.getItem('dilicart_secure_token');
+            if (cachedToken) {
+                ActiveSessionNode = JSON.parse(cachedToken);
+                bootstrapTerminalSystem();
+            }
         };
     </script>
 </body>
